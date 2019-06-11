@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PlayerData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <PlayerName>ＮＯ－ＮＡＭＥ</PlayerName>
+  <Level>1</Level>
+  <PlateId>0</PlateId>
+  <PlateEff>-1</PlateEff>
+  <VocaloidPoint>2</VocaloidPoint>
+  <SkinEquip>0</SkinEquip>
+  <ActToggle>1</ActToggle>
+  <ActVol>100</ActVol>
+  <ActSlideVol>100</ActSlideVol>
+  <HpVol>100</HpVol>
+  <PasswordStatus>-1</PasswordStatus>
+  <PvSortKind>2</PvSortKind>
+  <PlayIndex>0</PlayIndex>
+</PlayerData>
