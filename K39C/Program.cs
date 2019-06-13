@@ -14,6 +14,7 @@ namespace K39C
 
         static readonly string DIVA_PROCESS_NAME = "diva";
         static Manipulator Manipulator = new Manipulator();
+        static Watchdog system;
 
         // static FastLoader fastLoader;
         static List<Component> components;
@@ -69,7 +70,7 @@ namespace K39C
         {
             LockConsole();
 #if DEBUG
-            args = new string[] { "-t", "-s", "-p" };
+            args = new string[] { "-t", "-s", "-p", "-f", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
 #endif
             if (args == null || args.Length == 0) args = new string[] { "-p" };
 
@@ -83,20 +84,32 @@ namespace K39C
             // fastLoader.Start();
 
             components = new List<Component>();
-            components.Add(new Watchdog(Manipulator));
+            components.Add(system = new Watchdog(Manipulator));
 
             foreach (var arg in args.Select(a => a.ToLower().Trim()).Distinct())
             {
-                switch (arg)
+                var cmd = arg.Substring(1, 1);
+                switch (cmd)
                 {
-                    case "-t":
+                    case "t": // Touch Emulator
                         components.Add(new TouchEmulator(Manipulator));
                         break;
-                    case "-s":
+                    case "s": // Scale Component
                         components.Add(new ScaleComponent(Manipulator));
                         break;
-                    case "-p":
+                    case "p": // Player Data
                         components.Add(new PlayerDataManager(Manipulator));
+                        break;
+                    case "f": // System Timer
+                        system.SysTimer_Start();
+                        break;
+                    case "k": // Keychip Id
+                        if (arg.Length < 4) break;
+                        system.KeychipId = arg.Substring(3).Trim().ToUpper();
+                        break;
+                    case "m": // Main Id
+                        if (arg.Length < 4) break;
+                        system.MainId = arg.Substring(3).Trim().ToUpper();
                         break;
                     default:
                         break;
@@ -119,12 +132,7 @@ namespace K39C
             Console.CursorTop--;
             Console.WriteLine("    APPLICATION      : EXITED");
 
-            foreach (var component in components)
-            {
-                component.Stop();
-            }
-
-            Manipulator.CloseHandles();
+            if (!stopFlag) Stop();
             Thread.Sleep(5000);
         }
     }

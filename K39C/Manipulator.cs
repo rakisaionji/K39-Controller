@@ -224,6 +224,45 @@ namespace K39C
             return BitConverter.ToInt64(buffer, 0);
         }
 
+        public ushort ReadUInt16(long address)
+        {
+            if (!IsAttached || address <= 0)
+                return ushort.MaxValue;
+
+            int bytesRead = 0;
+            byte[] buffer = new byte[sizeof(short)];
+
+            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+
+            return BitConverter.ToUInt16(buffer, 0);
+        }
+
+        public uint ReadUInt32(long address)
+        {
+            if (!IsAttached || address <= 0)
+                return uint.MaxValue;
+
+            int bytesRead = 0;
+            byte[] buffer = new byte[sizeof(int)];
+
+            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+
+            return BitConverter.ToUInt32(buffer, 0);
+        }
+
+        public ulong ReadUInt64(long address)
+        {
+            if (!IsAttached || address <= 0)
+                return ulong.MaxValue;
+
+            int bytesRead = 0;
+            byte[] buffer = new byte[sizeof(long)];
+
+            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+
+            return BitConverter.ToUInt64(buffer, 0);
+        }
+
         public float ReadSingle(long address)
         {
             if (!IsAttached || address <= 0)
@@ -332,6 +371,39 @@ namespace K39C
             Write(address, buffer);
         }
 
+        public void WriteUInt16(long address, ushort value)
+        {
+            if (!IsAttached || address <= 0)
+                return;
+
+            // int bytesWritten = 0;
+            byte[] buffer = BitConverter.GetBytes(value);
+
+            Write(address, buffer);
+        }
+
+        public void WriteUInt32(long address, uint value)
+        {
+            if (!IsAttached || address <= 0)
+                return;
+
+            // int bytesWritten = 0;
+            byte[] buffer = BitConverter.GetBytes(value);
+
+            Write(address, buffer);
+        }
+
+        public void WriteUInt64(long address, ulong value)
+        {
+            if (!IsAttached || address <= 0)
+                return;
+
+            // int bytesWritten = 0;
+            byte[] buffer = BitConverter.GetBytes(value);
+
+            Write(address, buffer);
+        }
+
         public void WriteSingle(long address, float value)
         {
             if (!IsAttached || address <= 0)
@@ -351,6 +423,21 @@ namespace K39C
             // int bytesWritten = 0;
             byte[] buffer = BitConverter.GetBytes(value);
 
+            Write(address, buffer);
+        }
+
+        public void WriteAsciiString(long address, int length, string value)
+        {
+            if (!IsAttached || address <= 0)
+                return;
+
+            if (value.Length > length)
+                value = value.Substring(0, length);
+
+            var buffer = new byte[length];
+            var data = Encoding.ASCII.GetBytes(value);
+
+            Buffer.BlockCopy(data, 0, buffer, 0, data.Length);
             Write(address, buffer);
         }
 

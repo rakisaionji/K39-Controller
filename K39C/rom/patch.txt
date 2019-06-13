@@ -3,8 +3,6 @@
 // 2018-09-14T 14:26:44+09:00
 # file:			patch.txt
 # author:		samyuu
-# version:		1.00.00
-# date:			2019/03/17
 # image_base:	0x140000C00
 
 // Address         : Length : Original bytes                : Patched bytes
@@ -46,3 +44,9 @@
 
 // Ignore SYSTEM_STARTUP Location Server checks
 0x00000001406732A2 : 0x0002 : 75 1E                         : 90 90
+
+// Toon Shader Fix by lybxlpsv
+0x000000014050214F : 0x0002 : 74 18                         : 90 90 
+
+// Toon Shader Outline Fix by lybxlpsv
+0x0000000140641102 : 0x0001 : 00                            : 01

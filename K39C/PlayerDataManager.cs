@@ -114,8 +114,8 @@ namespace K39C
             Manipulator.WriteInt32(PLAYER_HP_VOL_ADDRESS, playerData.HpVol);
             Manipulator.WriteInt32(PLAYER_PWD_STAT_ADDRESS, playerData.PasswordStatus);
             Manipulator.WriteInt32(PLAYER_PV_SORT_KIND_ADDRESS, playerData.PvSortKind);
-            Manipulator.WriteInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayIndex);
-            Manipulator.WriteInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayIndex);
+            Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayIndex);
+            Manipulator.WriteUInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayIndex);
         }
 
         private void SavePlayerData()
@@ -127,14 +127,14 @@ namespace K39C
             playerData.ActSlideVol = Manipulator.ReadInt32(PLAYER_ACT_SLVOL_ADDRESS);
             playerData.HpVol = Manipulator.ReadInt32(PLAYER_HP_VOL_ADDRESS);
             playerData.PvSortKind = Manipulator.ReadInt32(PLAYER_PV_SORT_KIND_ADDRESS);
-            playerData.PlayIndex = Manipulator.ReadInt32(PLAYER_PLAY_ID_ADDRESS);
+            playerData.PlayIndex = Manipulator.ReadUInt32(PLAYER_PLAY_ID_ADDRESS);
             // Write to file
             var serializer = new XmlSerializer(typeof(PlayerData));
             var writer = new StreamWriter(PLAYER_DATA_PATH);
             serializer.Serialize(writer, playerData);
             writer.Close();
             // First write of play start id, only once per session
-            Manipulator.WriteInt32(PLAYER_START_ID_ADDRESS, playerData.PlayIndex);
+            Manipulator.WriteUInt32(PLAYER_START_ID_ADDRESS, playerData.PlayIndex);
         }
 
         public void Initialize()
@@ -163,7 +163,7 @@ namespace K39C
             Manipulator.WriteByte(PLAYER_RANK_DISP_ADDRESS, 1);
             Manipulator.WriteByte(PLAYER_OPTION_DISP_ADDRESS, 1);
             // First write of play start id, only once per starup
-            Manipulator.WriteInt32(PLAYER_START_ID_ADDRESS, playerData.PlayIndex);
+            Manipulator.WriteUInt32(PLAYER_START_ID_ADDRESS, playerData.PlayIndex);
             WritePlayerData();
         }
 
@@ -191,9 +191,9 @@ namespace K39C
                 case SubGameState.SUB_GAME_MAIN: // 13
                     if (step == 1)
                     {
-                        playerData.PlayIndex++;
-                        Manipulator.WriteInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayIndex);
-                        Manipulator.WriteInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayIndex);
+                        if (playerData.PlayIndex < uint.MaxValue) playerData.PlayIndex++;
+                        Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayIndex);
+                        Manipulator.WriteUInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayIndex);
                     }
                     step = 2;
                     break;

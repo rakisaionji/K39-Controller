@@ -14,7 +14,7 @@ namespace K39C
         Manipulator Manipulator;
         private bool checkTouchPanelState = true;
 
-        private const long GLUT_CURSOR_ARROW = 0x000000014019341BL;
+        // private const long GLUT_CURSOR_ARROW = 0x000000014019341BL;
         private const long TOUCH_PANEL_TASK_OBJECT = 0x000000014CC9EC30L;
         private const long TOUCH_PANEL_CONNECTION_STATE = TOUCH_PANEL_TASK_OBJECT + 0x78L;
         private const long TOUCH_PANEL_CONTACT_TYPE = TOUCH_PANEL_TASK_OBJECT + 0xA0L;
@@ -37,7 +37,7 @@ namespace K39C
             Thread.Sleep(5000);
 
             // Use GLUT_CURSOR_RIGHT_ARROW instead of GLUT_CURSOR_NONE
-            Manipulator.WritePatch(GLUT_CURSOR_ARROW, new byte[] { 00 });
+            // Manipulator.WritePatch(GLUT_CURSOR_ARROW, new byte[] { 00 });
 
             Manipulator.WriteInt32(TOUCH_PANEL_CONNECTION_STATE, 1);
 

@@ -17,6 +17,6 @@ namespace K39C
         [XmlElement] public int HpVol { get; set; } = 100;
         [XmlElement] public int PasswordStatus { get; set; } = -1;
         [XmlElement] public int PvSortKind { get; set; } = 2;
-        [XmlElement] public int PlayIndex { get; set; } = 1;
+        [XmlElement] public uint PlayIndex { get; set; } = 1;
     }
 }
