@@ -9,6 +9,7 @@ namespace K39C
         Manipulator Manipulator;
         private Thread thread;
         private bool stopFlag;
+        // private int consoleY;
 
         private const long FB1_WIDTH_ADDRESS = 0x00000001411AD5F8;
         private const long FB1_HEIGHT_ADDRESS = 0x00000001411AD5FC;
@@ -58,6 +59,7 @@ namespace K39C
             InjectPatches();
             thread = new Thread(new ThreadStart(ThreadCallback));
             thread.Start();
+            // consoleY = Console.CursorTop;
             Console.WriteLine("    SCALE COMPONENT  : OK");
         }
 
@@ -65,6 +67,8 @@ namespace K39C
         {
             stopFlag = true;
             thread = null;
+            // Console.CursorTop = consoleY;
+            // Console.WriteLine("    SCALE COMPONENT  : EXITED");
         }
 
         private void ThreadCallback()
@@ -80,7 +84,7 @@ namespace K39C
             }
             catch (Exception)
             {
-                Program.Stop();
+                Stop();
             }
         }
     }

@@ -14,6 +14,7 @@ namespace K39C
         Manipulator Manipulator;
         private Thread thread;
         private bool stopFlag;
+        // private int consoleY;
 
         ////////////////////////////////////////////////////////////////////////////////
         // ===== PATCH.TXT DESCRIPTIONS =====
@@ -212,6 +213,7 @@ namespace K39C
             Initialize();
             thread = new Thread(new ThreadStart(ThreadCallback));
             thread.Start();
+            // consoleY = Console.CursorTop;
             Console.WriteLine("    PLAYER DATA      : OK");
         }
 
@@ -219,6 +221,8 @@ namespace K39C
         {
             stopFlag = true;
             thread = null;
+            // Console.CursorTop = consoleY;
+            // Console.WriteLine("    PLAYER DATA      : EXITED");
         }
 
         private void ThreadCallback()
@@ -234,7 +238,7 @@ namespace K39C
             }
             catch (Exception)
             {
-                Program.Stop();
+                Stop();
             }
         }
     }

@@ -8,6 +8,7 @@ namespace K39C
     // Purely from @vladkorotnev/gjmemyakaldr
     public static class MouseHook
     {
+        // private static int consoleY;
         public static event MouseEventHandler MouseAction = delegate { };
 
         public static void Start()
@@ -17,6 +18,8 @@ namespace K39C
         public static void Stop()
         {
             UnhookWindowsHookEx(_hookID);
+            // Console.CursorTop = consoleY;
+            // Console.WriteLine("    MOUSE HOOK       : EXITED");
         }
 
         private static LowLevelMouseProc _proc = HookCallback;
@@ -33,6 +36,7 @@ namespace K39C
                 {
                     throw new System.ComponentModel.Win32Exception();
                 }
+                // consoleY = Console.CursorTop;
                 Console.WriteLine("    MOUSE HOOK       : OK");
                 return hook;
             }

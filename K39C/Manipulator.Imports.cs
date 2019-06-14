@@ -55,5 +55,11 @@ namespace K39C
 
         [DllImport(KERNEL32_DLL)]
         public static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+        [DllImport(KERNEL32_DLL)]
+        public static extern bool GetExitCodeProcess(IntPtr hProcess, out int lpExitCode);
+
+        [DllImport(USER32_DLL)]
+        public static extern bool SetForegroundWindow(IntPtr hwnd);
     }
 }

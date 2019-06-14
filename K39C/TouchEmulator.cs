@@ -13,6 +13,7 @@ namespace K39C
     {
         Manipulator Manipulator;
         private bool checkTouchPanelState = true;
+        private int consoleY;
 
         // private const long GLUT_CURSOR_ARROW = 0x000000014019341BL;
         private const long TOUCH_PANEL_TASK_OBJECT = 0x000000014CC9EC30L;
@@ -33,6 +34,7 @@ namespace K39C
             MouseHook.Start();
             MouseHook.MouseAction += new MouseEventHandler(MouseHook_MouseAction);
 
+            consoleY = Console.CursorTop;
             Console.WriteLine("    TOUCH PANEL      : WAIT");
             Thread.Sleep(5000);
 
@@ -41,12 +43,13 @@ namespace K39C
 
             Manipulator.WriteInt32(TOUCH_PANEL_CONNECTION_STATE, 1);
 
-            Console.CursorTop--;
+            Console.CursorTop = consoleY;
             Console.WriteLine("    TOUCH PANEL      : OK  ");
         }
 
         void MouseHook_MouseAction(object sender, MouseEventArgs e)
         {
+            if (!Manipulator.IsAttachedProcessActive()) return;
             _isTouching = (e.Button == MouseButtons.Left);
             SendTouch(e.X, e.Y, e.Button == MouseButtons.None ? 1 : 2);
         }
@@ -54,6 +57,8 @@ namespace K39C
         public void Stop()
         {
             MouseHook.Stop();
+            // Console.CursorTop = consoleY;
+            // Console.WriteLine("    TOUCH PANEL      : EXITED  ");
         }
 
         private bool _isTouching = false;
@@ -91,7 +96,7 @@ namespace K39C
             }
             catch (Exception)
             {
-                Program.Stop();
+                Stop();
             }
         }
     }

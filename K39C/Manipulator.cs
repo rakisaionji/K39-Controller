@@ -14,6 +14,8 @@ namespace K39C
 
         private const ProcessAccess PROCESS_ACCESS = ProcessAccess.PROCESS_VM_READ | ProcessAccess.PROCESS_VM_WRITE | ProcessAccess.PROCESS_VM_OPERATION;
 
+        private static readonly Dictionary<IntPtr, int> ProcessIdCache = new Dictionary<IntPtr, int>(16);
+
         public bool IsAttached => ProcessHandle != IntPtr.Zero;
 
         public IntPtr ProcessHandle { get; private set; }
@@ -70,6 +72,23 @@ namespace K39C
 
                 return pos;
             }
+        }
+
+        public bool IsAttachedProcessActive()
+        {
+            IntPtr foregroundHandle = GetForegroundWindow();
+
+            if (foregroundHandle == IntPtr.Zero)
+                return false;
+
+            // GetWindowThreadProcessId can sometimes have massive spikes in performance leading to micro stutters
+            if (!ProcessIdCache.TryGetValue(foregroundHandle, out int foregroundProcessId))
+            {
+                GetWindowThreadProcessId(foregroundHandle, out foregroundProcessId);
+                ProcessIdCache.Add(foregroundHandle, foregroundProcessId);
+            }
+
+            return foregroundProcessId == AttachedProcess.Id;
         }
 
         public bool TryAttachToProcess(string processName)
@@ -141,12 +160,13 @@ namespace K39C
             if (!IsAttached)
                 return false;
 
-            return WaitForSingleObject(ProcessHandle, 0) != 0x0;
+            int num; // STILL_ACTIVE = 259
+            return !(GetExitCodeProcess(ProcessHandle, out num) && (num != 0x103));
         }
 
         public void CloseHandles()
         {
-            if (!IsAttached)
+            if (!IsAttached || !IsProcessRunning())
                 return;
 
             foreach (ProcessThread thread in AttachedProcess.Threads)
@@ -498,6 +518,14 @@ namespace K39C
         {
             uint oldProtect;
             return VirtualProtect((IntPtr)lpAddress, dwSize, flNewProtect, out oldProtect);
+        }
+
+        public void SetMainWindowActive()
+        {
+            if (!IsAttached)
+                return;
+
+            SetForegroundWindow(AttachedProcess.MainWindowHandle);
         }
     }
 }

@@ -10,15 +10,15 @@ namespace K39C
     class Program
     {
         static readonly string PICO_VERSION = "2.00.00";
-        // static readonly string PICO_RELDATE = "2019-06-20";
+        static readonly string PICO_RELDATE = "2019-06-15";
 
         static readonly string DIVA_PROCESS_NAME = "diva";
         static Manipulator Manipulator = new Manipulator();
         static Watchdog system;
 
-        // static FastLoader fastLoader;
         static List<Component> components;
         static bool stopFlag = false;
+        private static int consoleY;
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr GetStdHandle(int nStdHandle);
@@ -41,7 +41,7 @@ namespace K39C
             Console.WriteLine("     by rakisaionji, vladkorotnev, samyuu and lybxlpsv      ");
             Console.WriteLine("------------------------------------------------------------");
             Console.WriteLine(" > Codename : K39-PICO ");
-            // Console.WriteLine(" > Date     : {0} ", PICO_RELDATE);
+            Console.WriteLine(" > Date     : {0} ", PICO_RELDATE);
             Console.WriteLine(" > Version  : {0} ", PICO_VERSION);
             Console.WriteLine("------------------------------------------------------------");
         }
@@ -79,15 +79,14 @@ namespace K39C
 
             if (Manipulator.TryAttachToProcess(DIVA_PROCESS_NAME)) Console.WriteLine("    DIVA HOOK        : OK");
             else { Console.WriteLine("    DIVA HOOK        : NG"); Thread.Sleep(5000); return; }
-
-            // fastLoader = new FastLoader(Manipulator);
-            // fastLoader.Start();
+            Manipulator.SetMainWindowActive();
 
             components = new List<Component>();
             components.Add(system = new Watchdog(Manipulator));
 
             foreach (var arg in args.Select(a => a.ToLower().Trim()).Distinct())
             {
+                if (arg.Length < 2) continue;
                 var cmd = arg.Substring(1, 1);
                 switch (cmd)
                 {
@@ -122,6 +121,7 @@ namespace K39C
             }
 
             Thread.Sleep(1000);
+            consoleY = Console.CursorTop;
             Console.WriteLine("    APPLICATION      : OK");
 
             while (!stopFlag && Manipulator.IsProcessRunning())
@@ -129,7 +129,7 @@ namespace K39C
                 Application.DoEvents();
             }
 
-            Console.CursorTop--;
+            Console.CursorTop = consoleY;
             Console.WriteLine("    APPLICATION      : EXITED");
 
             if (!stopFlag) Stop();
