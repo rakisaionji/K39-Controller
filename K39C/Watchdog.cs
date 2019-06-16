@@ -71,6 +71,7 @@ namespace K39C
             get { return Manipulator.ReadAsciiString(DISP_MAIN_ID); }
             set
             {
+                if (String.IsNullOrEmpty(value)) return;
                 Manipulator.WriteAsciiString(DISP_MAIN_ID, 16, value);
                 Manipulator.WriteAsciiString(TASK_MAIN_ID, 16, value);
                 if (REGEX_MAIN_ID.IsMatch(value))
@@ -85,6 +86,7 @@ namespace K39C
             get { return Manipulator.ReadAsciiString(DISP_KEYCHIP_ID); }
             set
             {
+                if (String.IsNullOrEmpty(value)) return;
                 Manipulator.WriteAsciiString(DISP_KEYCHIP_ID, 16, value);
                 if (REGEX_KEYCHIP_ID.IsMatch(value))
                 {
@@ -103,10 +105,15 @@ namespace K39C
 
         public void Start()
         {
+            if (Program.Settings.SysTimer) SysTimer_Start();
+            KeychipId = Program.Settings.KeychipId.Trim();
+            MainId = Program.Settings.MainId.Trim();
+
             if (thread != null) return;
             stopFlag = false;
             thread = new Thread(new ThreadStart(ThreadCallback));
             thread.Start();
+
             Console.WriteLine("    SYSTEM MANAGER   : OK");
         }
 
@@ -125,7 +132,7 @@ namespace K39C
                     Program.Stop();
                     break;
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(20);
             }
             stopFlag = false;
         }

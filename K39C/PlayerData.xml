@@ -12,5 +12,7 @@
   <HpVol>100</HpVol>
   <PasswordStatus>-1</PasswordStatus>
   <PvSortKind>2</PvSortKind>
-  <PlayIndex>0</PlayIndex>
+  <PlayDataId>0</PlayDataId>
+  <SetPlayData>false</SetPlayData>
+  <ClearBorder great="1" excellent="1" rival="0" />
 </PlayerData>

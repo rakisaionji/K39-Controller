@@ -1,33 +1,38 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
+using System.Xml.Serialization;
 
 namespace K39C
 {
     class Program
     {
-        static readonly string PICO_VERSION = "2.00.00";
-        static readonly string PICO_RELDATE = "2019-06-15";
+        private static readonly string PICO_VERSION = "2.10.00";
+        private static readonly string PICO_RELDATE = "2019-06-18";
+        private static readonly string APP_SETTING_PATH = "Settings.xml";
+        private static readonly string DIVA_PROCESS_NAME = "diva";
 
-        static readonly string DIVA_PROCESS_NAME = "diva";
-        static Manipulator Manipulator = new Manipulator();
-        static Watchdog system;
+        private static Manipulator Manipulator = new Manipulator();
+        private static Watchdog system;
 
-        static List<Component> components;
-        static bool stopFlag = false;
+        private static List<Component> components;
+        private static bool stopFlag = false;
         private static int consoleY;
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr GetStdHandle(int nStdHandle);
+        private static extern IntPtr GetStdHandle(int nStdHandle);
 
         [DllImport("kernel32.dll")]
-        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+        private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
 
         [DllImport("kernel32.dll")]
-        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+        private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+        public static Settings Settings { get; private set; }
 
         static void PrintProgramInfo()
         {
@@ -53,7 +58,7 @@ namespace K39C
             Manipulator.CloseHandles();
         }
 
-        static void LockConsole()
+        private static void LockConsole()
         {
             const int STD_INPUT_HANDLE = -10;
             const uint ENABLE_QUICK_EDIT = 0x0040;
@@ -66,13 +71,79 @@ namespace K39C
             SetConsoleMode(consoleHandle, mode);
         }
 
+        private static void LoadSettings()
+        {
+            try
+            {
+                var args = new List<string>();
+                var serializer = new XmlSerializer(typeof(Settings));
+                using (var fs = new FileStream(APP_SETTING_PATH, FileMode.Open))
+                {
+                    Settings = (Settings)serializer.Deserialize(fs);
+                    if (Settings == null) Settings = new Settings();
+                    fs.Close();
+                }
+            }
+            catch (Exception)
+            {
+                Settings = new Settings();
+            }
+        }
+
+        private static void SaveSettings() // Write to file
+        {
+            var serializer = new XmlSerializer(typeof(Settings));
+            using (var writer = new StreamWriter(APP_SETTING_PATH))
+            {
+                serializer.Serialize(writer, Settings);
+                writer.Close();
+            }
+        }
+
+        private static void SaveSettings(string[] args) // Read from args
+        {
+            if (args == null || args.Length == 0) return;
+            Settings.Reset();
+            foreach (var arg in args.Select(a => a.ToLower().Trim()).Distinct())
+            {
+                if (arg.Length < 2) continue;
+                var cmd = arg.Substring(1, 1);
+                switch (cmd)
+                {
+                    case "t": // Touch Emulator
+                        Settings.TouchEmulator = true;
+                        break;
+                    case "s": // Scale Component
+                        Settings.ScaleComponent = true;
+                        break;
+                    case "p": // Player Data
+                        Settings.PlayerDataManager = true;
+                        break;
+                    case "f": // System Timer
+                        Settings.SysTimer = true;
+                        break;
+                    case "k": // Keychip Id
+                        if (arg.Length < 4) break;
+                        Settings.KeychipId = arg.Substring(3).Trim().ToUpper();
+                        break;
+                    case "m": // Main Id
+                        if (arg.Length < 4) break;
+                        Settings.MainId = arg.Substring(3).Trim().ToUpper();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             LockConsole();
+            LoadSettings();
 #if DEBUG
             args = new string[] { "-t", "-s", "-p", "-f", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
 #endif
-            if (args == null || args.Length == 0) args = new string[] { "-p" };
+            SaveSettings(args);
 
             Console.Clear();
             PrintProgramInfo();
@@ -83,37 +154,9 @@ namespace K39C
 
             components = new List<Component>();
             components.Add(system = new Watchdog(Manipulator));
-
-            foreach (var arg in args.Select(a => a.ToLower().Trim()).Distinct())
-            {
-                if (arg.Length < 2) continue;
-                var cmd = arg.Substring(1, 1);
-                switch (cmd)
-                {
-                    case "t": // Touch Emulator
-                        components.Add(new TouchEmulator(Manipulator));
-                        break;
-                    case "s": // Scale Component
-                        components.Add(new ScaleComponent(Manipulator));
-                        break;
-                    case "p": // Player Data
-                        components.Add(new PlayerDataManager(Manipulator));
-                        break;
-                    case "f": // System Timer
-                        system.SysTimer_Start();
-                        break;
-                    case "k": // Keychip Id
-                        if (arg.Length < 4) break;
-                        system.KeychipId = arg.Substring(3).Trim().ToUpper();
-                        break;
-                    case "m": // Main Id
-                        if (arg.Length < 4) break;
-                        system.MainId = arg.Substring(3).Trim().ToUpper();
-                        break;
-                    default:
-                        break;
-                }
-            }
+            if (Settings.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
+            if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
+            if (Settings.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));
 
             foreach (var component in components)
             {
@@ -121,6 +164,8 @@ namespace K39C
             }
 
             Thread.Sleep(1000);
+            SaveSettings();
+
             consoleY = Console.CursorTop;
             Console.WriteLine("    APPLICATION      : OK");
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <TouchEmulator>false</TouchEmulator>
+  <ScaleComponent>false</ScaleComponent>
+  <PlayerDataManager>true</PlayerDataManager>
+  <SysTimer>true</SysTimer>
+  <KeychipId></KeychipId>
+  <MainId></MainId>
+</Settings>
