@@ -12,7 +12,7 @@ namespace K39C
         private const long RESOLUTION_WIDTH_ADDRESS = 0x0000000140EDA8BC;
         private const long RESOLUTION_HEIGHT_ADDRESS = 0x0000000140EDA8C0;
 
-        private const ProcessAccess PROCESS_ACCESS = ProcessAccess.PROCESS_VM_READ | ProcessAccess.PROCESS_VM_WRITE | ProcessAccess.PROCESS_VM_OPERATION;
+        private const ProcessAccess PROCESS_ACCESS = ProcessAccess.PROCESS_ALL_ACCESS;
 
         private static readonly Dictionary<IntPtr, int> ProcessIdCache = new Dictionary<IntPtr, int>(16);
 
@@ -200,7 +200,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[length];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return buffer;
         }
@@ -213,7 +213,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(byte)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return buffer[0];
         }
@@ -226,7 +226,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(short)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToInt16(buffer, 0);
         }
@@ -239,7 +239,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(int)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToInt32(buffer, 0);
         }
@@ -252,7 +252,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(long)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToInt64(buffer, 0);
         }
@@ -265,7 +265,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(short)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToUInt16(buffer, 0);
         }
@@ -278,7 +278,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(int)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToUInt32(buffer, 0);
         }
@@ -291,7 +291,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(long)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToUInt64(buffer, 0);
         }
@@ -304,7 +304,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(float)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToSingle(buffer, 0);
         }
@@ -317,7 +317,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[sizeof(double)];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return BitConverter.ToDouble(buffer, 0);
         }
@@ -332,7 +332,7 @@ namespace K39C
             int bytesRead = 0;
             byte[] buffer = new byte[length];
 
-            ReadProcessMemory((int)ProcessHandle, address, buffer, length, ref bytesRead);
+            ReadProcessMemory(ProcessHandle, address, buffer, length, ref bytesRead);
 
             return Encoding.ASCII.GetString(buffer);
         }
@@ -344,7 +344,7 @@ namespace K39C
 
             int bytesWritten = 0;
 
-            WriteProcessMemory((int)ProcessHandle, address, value, value.Length, ref bytesWritten);
+            WriteProcessMemory(ProcessHandle, address, value, value.Length, ref bytesWritten);
         }
 
         public void WritePatch(long address, byte[] value)
@@ -355,9 +355,9 @@ namespace K39C
             uint oldProtect, bck;
             int bytesWritten = 0;
 
-            VirtualProtect((IntPtr)address, (uint)value.Length, PAGE_EXECUTE_READWRITE, out oldProtect);
-            WriteProcessMemory((int)ProcessHandle, address, value, value.Length, ref bytesWritten);
-            VirtualProtect((IntPtr)address, (uint)value.Length, oldProtect, out bck);
+            VirtualProtect((IntPtr)address, value.Length, PAGE_EXECUTE_READWRITE, out oldProtect);
+            WriteProcessMemory(ProcessHandle, address, value, value.Length, ref bytesWritten);
+            VirtualProtect((IntPtr)address, value.Length, oldProtect, out bck);
         }
 
         public void WriteByte(long address, byte value)
@@ -516,21 +516,9 @@ namespace K39C
 
             uint oldProtect, bck;
 
-            VirtualProtect((IntPtr)address, (uint)length, PAGE_EXECUTE_READWRITE, out oldProtect);
+            VirtualProtect((IntPtr)address, length, PAGE_EXECUTE_READWRITE, out oldProtect);
             Write(address, Assembly.GetNopInstructions(length));
-            VirtualProtect((IntPtr)address, (uint)length, oldProtect, out bck);
-        }
-
-        public static bool VirtualProtect(IntPtr lpAddress, uint dwSize)
-        {
-            uint oldProtect;
-            return VirtualProtect((IntPtr)lpAddress, dwSize, PAGE_EXECUTE_READWRITE, out oldProtect);
-        }
-
-        public static bool VirtualProtect(IntPtr lpAddress, uint dwSize, uint flNewProtect)
-        {
-            uint oldProtect;
-            return VirtualProtect((IntPtr)lpAddress, dwSize, flNewProtect, out oldProtect);
+            VirtualProtect((IntPtr)address, length, oldProtect, out bck);
         }
 
         public void SetMainWindowActive()

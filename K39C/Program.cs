@@ -16,6 +16,7 @@ namespace K39C
         private static readonly string PICO_RELDATE = "2019-06-24";
         private static readonly string APP_SETTING_PATH = "Settings.xml";
         private static readonly string DIVA_PROCESS_NAME = "diva";
+        private static readonly string PLUGIN_LOADER_NAME = "DllInjector.exe";
 
         private static Manipulator Manipulator = new Manipulator();
 
@@ -75,7 +76,6 @@ namespace K39C
         {
             try
             {
-                var args = new List<string>();
                 var serializer = new XmlSerializer(typeof(Settings));
                 using (var fs = new FileStream(APP_SETTING_PATH, FileMode.Open))
                 {
@@ -104,10 +104,10 @@ namespace K39C
         {
             if (args == null || args.Length == 0) return;
             Settings.Reset();
-            foreach (var arg in args.Select(a => a.ToLower().Trim()).Distinct())
+            foreach (var arg in args.Select(a => a.Trim()).Distinct())
             {
                 if (arg.Length < 2) continue;
-                var cmd = arg.Substring(1, 1);
+                var cmd = arg.Substring(1, 1).ToLower();
                 switch (cmd)
                 {
                     case "t": // Touch Emulator
@@ -121,6 +121,11 @@ namespace K39C
                         break;
                     case "f": // System Timer
                         Settings.SysTimer = true;
+                        break;
+                    case "i": // FastLoader
+                        if (arg.Length < 4) break;
+                        var i = arg.Substring(3).Split(',');
+                        foreach (var f in i) Settings.DivaPlugins.Add(f.Trim());
                         break;
                     case "k": // Keychip Id
                         if (arg.Length < 4) break;
@@ -169,12 +174,17 @@ namespace K39C
             }
         }
 
+        private static string GetPluginLabel(string str)
+        {
+            return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? " " + x.ToString() : x.ToString())).ToUpper().PadRight(16).Substring(0, 16);
+        }
+
         static void Main(string[] args)
         {
             LockConsole();
             LoadSettings();
 #if DEBUG
-            args = new string[] { "-t", "-s", "-p", "-f", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
+            args = new string[] { "-t", "-s", "-p", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
 #endif
             SaveSettings(args);
 
@@ -197,6 +207,17 @@ namespace K39C
             foreach (var component in components)
             {
                 component.Start();
+            }
+
+            foreach (var plugin in Settings.DivaPlugins)
+            {
+                if (!File.Exists(PLUGIN_LOADER_NAME)) break;
+                var file = String.Format("{0}.dll", plugin);
+                if (File.Exists(file))
+                {
+                    Process.Start(PLUGIN_LOADER_NAME, file);
+                    Console.WriteLine(String.Format("    {0} : OK", GetPluginLabel(plugin)));
+                }
             }
 
             Thread.Sleep(1000);

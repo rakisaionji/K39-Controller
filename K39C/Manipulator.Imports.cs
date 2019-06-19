@@ -35,17 +35,17 @@ namespace K39C
         [DllImport(KERNEL32_DLL)]
         public static extern int ResumeThread(IntPtr hThread);
 
-        [DllImport(KERNEL32_DLL)]
-        public static extern bool ReadProcessMemory(int hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
+        [DllImport(KERNEL32_DLL, SetLastError = true)]
+        public static extern bool ReadProcessMemory(IntPtr hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
 
-        [DllImport(KERNEL32_DLL)]
-        public static extern bool WriteProcessMemory(int hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesWritten);
+        [DllImport(KERNEL32_DLL, SetLastError = true)]
+        public static extern bool WriteProcessMemory(IntPtr hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesWritten);
 
         [DllImport(USER32_DLL)]
         static extern bool ScreenToClient(IntPtr hWnd, out POINT lpPoint);
 
         [DllImport(KERNEL32_DLL)]
-        public static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, uint flNewProtect, out uint lpflOldProtect);
+        public static extern bool VirtualProtect(IntPtr lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
 
         [DllImport(KERNEL32_DLL)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]

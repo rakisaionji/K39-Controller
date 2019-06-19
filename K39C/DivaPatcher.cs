@@ -54,12 +54,15 @@ namespace K39C
             if (Settings.FreePlay)
                 // Always return true for the SelCredit enter SelPv check
                 Manipulator.WritePatch(0x0000000140393610, new byte[] { 0xB0, 0x01, 0xC3, 0x90, 0x90, 0x90 });
-            if (Settings.HideCredits)
-                // Dirty hide of CREDIT(S) counter
-                Manipulator.WritePatch(0x00000001409F6200, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
             if (Settings.GlutCursor != GlutCursor.NONE)
                 // Use GLUT_CURSOR_RIGHT_ARROW instead of GLUT_CURSOR_NONE
                 Manipulator.WritePatch(0x000000014019341B, new byte[] { (byte)Settings.GlutCursor });
+            if (Settings.HideCredits)
+            {
+                // Dirty hide of CREDIT(S) counter, revised by rakisaionji
+                Manipulator.WritePatch(0x00000001403BAC2E, new byte[] { 0xD8 }); // CREDIT(S)
+                Manipulator.WritePatch(0x00000001403BABEF, new byte[] { 0x06, 0xB6 }); // FREE PLAY
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace K39C
@@ -19,6 +20,7 @@ namespace K39C
         [XmlElement] public bool SysTimer { get; set; } = false;
         [XmlElement] public string KeychipId { get; set; } = String.Empty;
         [XmlElement] public string MainId { get; set; } = String.Empty;
+        [XmlArray("DivaPlugins"), XmlArrayItem("DivaPlugin")] public List<string> DivaPlugins { get; set; } = new List<string>();
 
         public void Reset()
         {
@@ -28,6 +30,7 @@ namespace K39C
             SysTimer = false;
             KeychipId = String.Empty;
             MainId = String.Empty;
+            DivaPlugins = new List<string>();
         }
     }
 }

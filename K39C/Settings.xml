@@ -13,4 +13,7 @@
   <SysTimer>true</SysTimer>
   <KeychipId></KeychipId>
   <MainId></MainId>
+  <DivaPlugins>
+    <DivaPlugin>FastLoader</DivaPlugin>
+  </DivaPlugins>
 </Settings>
