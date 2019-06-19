@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Assembly.cs" />
     <Compile Include="Component.cs" />
+    <Compile Include="DivaPatcher.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Manipulator.cs" />
     <Compile Include="Manipulator.Imports.cs" />
@@ -61,18 +62,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Patch.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PlayerData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Settings.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Prepatch.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

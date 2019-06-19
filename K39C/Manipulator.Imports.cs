@@ -61,5 +61,8 @@ namespace K39C
 
         [DllImport(USER32_DLL)]
         public static extern bool SetForegroundWindow(IntPtr hwnd);
+
+        [DllImport(KERNEL32_DLL)]
+        public static extern bool CreateProcess(string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, CreateProcessFlags dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
     }
 }

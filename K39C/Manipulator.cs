@@ -91,6 +91,19 @@ namespace K39C
             return foregroundProcessId == AttachedProcess.Id;
         }
 
+        public bool IsProcessRunning(string processName)
+        {
+            return (Process.GetProcessesByName(processName).Length > 0);
+        }
+
+        public bool CreateProcess(string fileName, string arguments, string workingDirectory, out IntPtr hThread)
+        {
+            var si = new STARTUPINFO();
+            var ps = CreateProcess(null, fileName + " " + arguments, IntPtr.Zero, IntPtr.Zero, false, CreateProcessFlags.CREATE_SUSPENDED, IntPtr.Zero, workingDirectory, ref si, out PROCESS_INFORMATION pi);
+            hThread = pi.hThread;
+            return ps;
+        }
+
         public bool TryAttachToProcess(string processName)
         {
             var processes = Process.GetProcessesByName(processName);

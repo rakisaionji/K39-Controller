@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DivaPath>F:\SBZV\diva.exe</DivaPath>
+  <Arguments>-w -aa</Arguments>
+  <GlutCursor>RIGHT_ARROW</GlutCursor>
+  <ApplyPatch>true</ApplyPatch>
+  <HideCredits>true</HideCredits>
+  <FreePlay>true</FreePlay>
+  <WaitTime>20</WaitTime>
   <TouchEmulator>false</TouchEmulator>
   <ScaleComponent>false</ScaleComponent>
   <PlayerDataManager>true</PlayerDataManager>

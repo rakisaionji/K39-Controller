@@ -6,6 +6,13 @@ namespace K39C
     [XmlRoot]
     public class Settings
     {
+        [XmlElement] public string DivaPath { get; set; } = String.Empty;
+        [XmlElement] public string Arguments { get; set; } = String.Empty;
+        [XmlElement] public GlutCursor GlutCursor { get; set; } = GlutCursor.NONE;
+        [XmlElement] public bool ApplyPatch { get; set; } = false;
+        [XmlElement] public bool HideCredits { get; set; } = false;
+        [XmlElement] public bool FreePlay { get; set; } = false;
+        [XmlElement] public int WaitTime { get; set; } = 20;
         [XmlElement] public bool TouchEmulator { get; set; } = false;
         [XmlElement] public bool ScaleComponent { get; set; } = false;
         [XmlElement] public bool PlayerDataManager { get; set; } = true;

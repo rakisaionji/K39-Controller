@@ -81,53 +81,6 @@ namespace K39C
         }
     }
 
-    // From WinUser.h
-    public enum HookType
-    {
-        WH_MIN = (-1),
-        WH_MSGFILTER = (-1),
-        WH_JOURNALRECORD = 0,
-        WH_JOURNALPLAYBACK = 1,
-        WH_KEYBOARD = 2,
-        WH_GETMESSAGE = 3,
-        WH_CALLWNDPROC = 4,
-        WH_CBT = 5,
-        WH_SYSMSGFILTER = 6,
-        WH_MOUSE = 7,
-        WH_HARDWARE = 8,
-        WH_DEBUG = 9,
-        WH_SHELL = 10,
-        WH_FOREGROUNDIDLE = 11,
-        WH_CALLWNDPROCRET = 12,
-        WH_KEYBOARD_LL = 13,
-        WH_MOUSE_LL = 14
-    }
-    public enum HookCodes
-    {
-        HC_ACTION = 0,
-        HC_GETNEXT = 1,
-        HC_SKIP = 2,
-        HC_NOREMOVE = 3,
-        HC_NOREM = HC_NOREMOVE,
-        HC_SYSMODALON = 4,
-        HC_SYSMODALOFF = 5
-    }
-    public enum CBTHookCodes
-    {
-        HCBT_MOVESIZE = 0,
-        HCBT_MINMAX = 1,
-        HCBT_QS = 2,
-        HCBT_CREATEWND = 3,
-        HCBT_DESTROYWND = 4,
-        HCBT_ACTIVATE = 5,
-        HCBT_CLICKSKIPPED = 6,
-        HCBT_KEYSKIPPED = 7,
-        HCBT_SYSCOMMAND = 8,
-        HCBT_SETFOCUS = 9
-    }
-
-    public delegate IntPtr CBTProc(int code, IntPtr wParam, IntPtr lParam);
-
     [StructLayout(LayoutKind.Sequential)]
     public struct PROCESS_INFORMATION
     {
@@ -206,5 +159,32 @@ namespace K39C
         public int nLength;
         public IntPtr lpSecurityDescriptor;
         public int bInheritHandle;
+    }
+
+    public enum GlutCursor : int
+    {
+        RIGHT_ARROW = 0,
+        LEFT_ARROW = 1,
+        INFO = 2,
+        DESTROY = 3,
+        HELP = 4,
+        CYCLE = 5,
+        SPRAY = 6,
+        WAIT = 7,
+        TEXT = 8,
+        CROSSHAIR = 9,
+        UP_DOWN = 10,
+        LEFT_RIGHT = 11,
+        TOP_SIDE = 12,
+        BOTTOM_SIDE = 13,
+        LEFT_SIDE = 14,
+        RIGHT_SIDE = 15,
+        TOP_LEFT_CORNER = 16,
+        TOP_RIGHT_CORNER = 17,
+        BOTTOM_RIGHT_CORNER = 18,
+        BOTTOM_LEFT_CORNER = 19,
+        INHERIT = 100,
+        NONE = 101,
+        FULL_CROSSHAIR = 102,
     }
 }

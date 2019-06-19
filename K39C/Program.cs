@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -11,13 +12,12 @@ namespace K39C
 {
     class Program
     {
-        private static readonly string PICO_VERSION = "2.10.00";
-        private static readonly string PICO_RELDATE = "2019-06-18";
+        private static readonly string PICO_VERSION = "2.20.00";
+        private static readonly string PICO_RELDATE = "2019-06-24";
         private static readonly string APP_SETTING_PATH = "Settings.xml";
         private static readonly string DIVA_PROCESS_NAME = "diva";
 
         private static Manipulator Manipulator = new Manipulator();
-        private static Watchdog system;
 
         private static List<Component> components;
         private static bool stopFlag = false;
@@ -136,6 +136,39 @@ namespace K39C
             }
         }
 
+        static void StartDiva()
+        {
+            var pa = Settings.DivaPath.Trim();
+            if (String.IsNullOrEmpty(pa) || !File.Exists(pa)) return;
+
+            var fi = new FileInfo(pa);
+            var ar = Settings.Arguments;
+            var wd = fi.DirectoryName;
+            if (!(Manipulator.CreateProcess(pa, ar, wd, out IntPtr ht))) return;
+            if (!Manipulator.TryAttachToProcess(DIVA_PROCESS_NAME)) return;
+
+            if (Settings.ApplyPatch)
+            {
+                var pt = new DivaPatcher(Manipulator, Settings);
+                pt.ApplyPatches();
+            }
+
+            Manipulator.ResumeThread(ht);
+            WaitForDiva();
+        }
+
+        static void WaitForDiva()
+        {
+            if (Settings.WaitTime < 0) Settings.WaitTime = 0;
+            if (Settings.WaitTime > 60) Settings.WaitTime = 60;
+            for (int i = 0; i < Settings.WaitTime; i++)
+            {
+                Console.CursorTop = consoleY;
+                Console.WriteLine("    DIVA HOOK        : WAIT " + i);
+                Thread.Sleep(1000);
+            }
+        }
+
         static void Main(string[] args)
         {
             LockConsole();
@@ -147,13 +180,16 @@ namespace K39C
 
             Console.Clear();
             PrintProgramInfo();
+            components = new List<Component>();
 
-            if (Manipulator.TryAttachToProcess(DIVA_PROCESS_NAME)) Console.WriteLine("    DIVA HOOK        : OK");
-            else { Console.WriteLine("    DIVA HOOK        : NG"); Thread.Sleep(5000); return; }
+            consoleY = Console.CursorTop;
+            if (!Manipulator.IsProcessRunning(DIVA_PROCESS_NAME)) StartDiva();
+            Console.CursorTop = consoleY;
+            if (Manipulator.TryAttachToProcess(DIVA_PROCESS_NAME)) Console.WriteLine("    DIVA HOOK        : OK      ");
+            else { Console.WriteLine("    DIVA HOOK        : NG      "); Thread.Sleep(5000); return; }
             Manipulator.SetMainWindowActive();
 
-            components = new List<Component>();
-            components.Add(system = new Watchdog(Manipulator));
+            components.Add(new Watchdog(Manipulator));
             if (Settings.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
             if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
             if (Settings.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));

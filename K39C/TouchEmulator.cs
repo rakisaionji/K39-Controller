@@ -12,8 +12,7 @@ namespace K39C
     class TouchEmulator : Component
     {
         Manipulator Manipulator;
-        private bool checkTouchPanelState = true;
-        private int consoleY;
+        // private int consoleY;
 
         // private const long GLUT_CURSOR_ARROW = 0x000000014019341BL;
         private const long TOUCH_PANEL_TASK_OBJECT = 0x000000014CC9EC30L;
@@ -31,19 +30,16 @@ namespace K39C
 
         public void Start()
         {
+            // consoleY = Console.CursorTop;
+            // Console.WriteLine("    TOUCH PANEL      : WAIT");
+
             MouseHook.Start();
             MouseHook.MouseAction += new MouseEventHandler(MouseHook_MouseAction);
+            // Thread.Sleep(5000);
 
-            consoleY = Console.CursorTop;
-            Console.WriteLine("    TOUCH PANEL      : WAIT");
-            Thread.Sleep(5000);
+            // Manipulator.WriteInt32(TOUCH_PANEL_CONNECTION_STATE, 1);
 
-            // Use GLUT_CURSOR_RIGHT_ARROW instead of GLUT_CURSOR_NONE
-            // Manipulator.WritePatch(GLUT_CURSOR_ARROW, new byte[] { 00 });
-
-            Manipulator.WriteInt32(TOUCH_PANEL_CONNECTION_STATE, 1);
-
-            Console.CursorTop = consoleY;
+            // Console.CursorTop = consoleY;
             Console.WriteLine("    TOUCH PANEL      : OK  ");
         }
 
@@ -76,11 +72,7 @@ namespace K39C
         {
             try
             {
-                if (checkTouchPanelState && Manipulator.ReadInt32(TOUCH_PANEL_CONNECTION_STATE) != 1)
-                {
-                    Manipulator.WriteInt32(TOUCH_PANEL_CONNECTION_STATE, 1);
-                    checkTouchPanelState = false;
-                }
+                if (Manipulator.ReadInt32(TOUCH_PANEL_CONNECTION_STATE) != 1) Manipulator.WriteInt32(TOUCH_PANEL_CONNECTION_STATE, 1);
 
                 if (_isTouching)
                 {
