@@ -199,7 +199,7 @@ namespace K39C
             else { Console.WriteLine("    DIVA HOOK        : NG      "); Thread.Sleep(5000); return; }
             Manipulator.SetMainWindowActive();
 
-            components.Add(new Watchdog(Manipulator));
+            components.Add(new Watchdog(Manipulator, Settings));
             if (Settings.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
             if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
             if (Settings.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));

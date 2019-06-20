@@ -13,6 +13,8 @@ namespace K39C
         [XmlElement] public bool ApplyPatch { get; set; } = false;
         [XmlElement] public bool HideCredits { get; set; } = false;
         [XmlElement] public bool FreePlay { get; set; } = false;
+        [XmlElement] public bool TemporalAA { get; set; } = true;
+        [XmlElement] public bool MorphologicalAA { get; set; } = true;
         [XmlElement] public int WaitTime { get; set; } = 20;
         [XmlElement] public bool TouchEmulator { get; set; } = false;
         [XmlElement] public bool ScaleComponent { get; set; } = false;
@@ -24,6 +26,8 @@ namespace K39C
 
         public void Reset()
         {
+            TemporalAA = true;
+            MorphologicalAA = true;
             TouchEmulator = false;
             ScaleComponent = false;
             PlayerDataManager = true;

@@ -6,6 +6,8 @@
   <ApplyPatch>true</ApplyPatch>
   <HideCredits>true</HideCredits>
   <FreePlay>true</FreePlay>
+  <TemporalAA>true</TemporalAA>
+  <MorphologicalAA>true</MorphologicalAA>
   <WaitTime>20</WaitTime>
   <TouchEmulator>false</TouchEmulator>
   <ScaleComponent>false</ScaleComponent>

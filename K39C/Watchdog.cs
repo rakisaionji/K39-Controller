@@ -6,6 +6,7 @@ namespace K39C
 {
     class Watchdog : Component
     {
+        Settings Settings;
         Manipulator Manipulator;
         private Thread thread;
         private bool stopFlag;
@@ -33,12 +34,13 @@ namespace K39C
         private const int SYS_TIMER_TIME = SEL_PV_FREEZE_TIME * SYS_TIME_FACTOR;
         private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
 
-        public Watchdog(Manipulator manipulator)
+        public Watchdog(Manipulator manipulator, Settings settings)
         {
             Manipulator = manipulator;
+            Settings = settings;
         }
 
-        public void SysTimer_Start()
+        private void SysTimer_Start()
         {
             Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, SYS_TIMER_TIME);
 
@@ -52,7 +54,7 @@ namespace K39C
             Manipulator.Write(0x1405C517AL, Assembly.GetNopInstructions(6));
         }
 
-        public void SysTimer_Stop()
+        private void SysTimer_Stop()
         {
             // Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, 0xE10);
 
@@ -66,7 +68,7 @@ namespace K39C
             // Manipulator.Write(0x1405C517AL, new byte[] { 0x89, 0x8E, 0x38, 0x0B, 0x00, 0x00 });
         }
 
-        public string MainId
+        private string MainId
         {
             get { return Manipulator.ReadAsciiString(DISP_MAIN_ID); }
             set
@@ -81,7 +83,7 @@ namespace K39C
             }
         }
 
-        public string KeychipId
+        private string KeychipId
         {
             get { return Manipulator.ReadAsciiString(DISP_KEYCHIP_ID); }
             set
@@ -105,9 +107,9 @@ namespace K39C
 
         public void Start()
         {
-            if (Program.Settings.SysTimer) SysTimer_Start();
-            KeychipId = Program.Settings.KeychipId.Trim();
-            MainId = Program.Settings.MainId.Trim();
+            if (Settings.SysTimer) SysTimer_Start();
+            KeychipId = Settings.KeychipId.Trim();
+            MainId = Settings.MainId.Trim();
 
             if (thread != null) return;
             stopFlag = false;
@@ -123,6 +125,17 @@ namespace K39C
             thread = null;
         }
 
+        public void Update()
+        {
+            if (!Settings.TemporalAA)
+                // Disable Temporal AA by lybxlpsv
+                Manipulator.WriteByte(0x00000001411AB67C, 0);
+            if (!Settings.MorphologicalAA)
+                // Disable Morphological AA by lybxlpsv
+                Manipulator.WriteByte(0x00000001411AB680, 0);
+            return;
+        }
+
         private void ThreadCallback()
         {
             while (!stopFlag)
@@ -132,7 +145,8 @@ namespace K39C
                     Program.Stop();
                     break;
                 }
-                Thread.Sleep(20);
+                Update();
+                Thread.Sleep(100);
             }
             stopFlag = false;
         }

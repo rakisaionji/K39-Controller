@@ -38,8 +38,7 @@ namespace K39C
 		        // Ignore SYSTEM_STARTUP Location Server checks
 		        { 0x00000001406732A2, new byte [] { 0x90, 0x90 } },
 		        // Toon Shader Fix by lybxlpsv
-		        { 0x000000014050214F, new byte [] { 0x90 } },
-                { 0x0000000140502150, new byte [] { 0x90 } },
+		        { 0x000000014050214F, new byte [] { 0x90, 0x90 } },
 		        // Toon Shader Outline Fix by lybxlpsv
 		        { 0x0000000140641102, new byte [] { 0x01 } },
             };
