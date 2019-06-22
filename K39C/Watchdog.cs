@@ -32,7 +32,7 @@ namespace K39C
         private const int SYS_TIME_FACTOR = 60;
         private const int SEL_PV_FREEZE_TIME = 39;
         private const int SYS_TIMER_TIME = SEL_PV_FREEZE_TIME * SYS_TIME_FACTOR;
-        private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
+        // private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
 
         public Watchdog(Manipulator manipulator, Settings settings)
         {
@@ -42,7 +42,7 @@ namespace K39C
 
         private void SysTimer_Start()
         {
-            Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, SYS_TIMER_TIME);
+            // Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, SYS_TIMER_TIME);
 
             // 0x00000001405C5143:  mov qword ptr [rsi+0B38h], 3600
             Manipulator.WriteInt32(0x1405C514AL, SYS_TIMER_TIME);

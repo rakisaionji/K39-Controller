@@ -12,8 +12,8 @@ namespace K39C
 {
     class Program
     {
-        private static readonly string PICO_VERSION = "2.20.00";
-        private static readonly string PICO_RELDATE = "2019-06-24";
+        private static readonly string K39C_VERSION = "2.20.00";
+        private static readonly string K39C_RELDATE = "2019-06-24";
         private static readonly string APP_SETTING_PATH = "Settings.xml";
         private static readonly string DIVA_PROCESS_NAME = "diva";
         private static readonly string PLUGIN_LOADER_NAME = "DllInjector.exe";
@@ -41,14 +41,14 @@ namespace K39C
 #if DEBUG
             Console.WriteLine("              ---- >>>> DEBUG_BUILD <<<< ----               ");
 #endif
-            Console.WriteLine("              PDAFT Controller for S39 and K39              ");
+            Console.WriteLine("          PDAFT 7.10.00 Controller for S39 and K39          ");
             Console.WriteLine("------------------------------------------------------------");
             Console.WriteLine("   Minimal and less intrusive controller for real cabinet   ");
             Console.WriteLine("     by rakisaionji, vladkorotnev, samyuu and lybxlpsv      ");
             Console.WriteLine("------------------------------------------------------------");
             Console.WriteLine(" > Codename : K39-PICO ");
-            Console.WriteLine(" > Date     : {0} ", PICO_RELDATE);
-            Console.WriteLine(" > Version  : {0} ", PICO_VERSION);
+            Console.WriteLine(" > Date     : {0} ", K39C_RELDATE);
+            Console.WriteLine(" > Version  : {0} ", K39C_VERSION);
             Console.WriteLine("------------------------------------------------------------");
         }
 

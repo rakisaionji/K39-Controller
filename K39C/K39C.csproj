@@ -7,7 +7,7 @@
     <ProjectGuid>{88EB05C4-6565-4D19-80AB-F75E3D1A5198}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>K39C</RootNamespace>
-    <AssemblyName>K39C</AssemblyName>
+    <AssemblyName>K39C-PICO</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
