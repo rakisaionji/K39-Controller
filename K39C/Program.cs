@@ -14,9 +14,9 @@ namespace K39C
     {
         private static readonly string K39C_VERSION = "2.20.00";
         private static readonly string K39C_RELDATE = "2019-06-24";
-        private static readonly string APP_SETTING_PATH = "Settings.xml";
+        private static readonly string APP_SETTING_PATH = Assembly.GetSaveDataPath("Settings.xml");
         private static readonly string DIVA_PROCESS_NAME = "diva";
-        private static readonly string PLUGIN_LOADER_NAME = "DllInjector.exe";
+        private static readonly string PLUGIN_LOADER_NAME = Assembly.GetSaveDataPath("DllInjector.exe");
 
         private static Manipulator Manipulator = new Manipulator();
 
@@ -212,10 +212,10 @@ namespace K39C
             foreach (var plugin in Settings.DivaPlugins)
             {
                 if (!File.Exists(PLUGIN_LOADER_NAME)) break;
-                var file = String.Format("{0}.dll", plugin);
+                var file = Assembly.GetSaveDataPath(String.Format("{0}.dll", plugin));
                 if (File.Exists(file))
                 {
-                    Process.Start(PLUGIN_LOADER_NAME, file);
+                    Process.Start(PLUGIN_LOADER_NAME, String.Format("\"{0}\"", file));
                     Console.WriteLine(String.Format("    {0} : OK", GetPluginLabel(plugin)));
                 }
             }

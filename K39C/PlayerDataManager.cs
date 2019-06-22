@@ -57,7 +57,7 @@ namespace K39C
 
         private const long CURRENT_SUB_STATE = 0x0000000140EDA82CL;
 
-        private const string PLAYER_DATA_PATH = "PlayerData.xml";
+        private readonly string PLAYER_DATA_PATH = Assembly.GetSaveDataPath("PlayerData.xml");
 
         private int step = 0;
         private PlayerData playerData;
