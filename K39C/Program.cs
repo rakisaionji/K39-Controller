@@ -12,8 +12,8 @@ namespace K39C
 {
     class Program
     {
-        private static readonly string K39C_VERSION = "2.20.00";
-        private static readonly string K39C_RELDATE = "2019-06-24";
+        private static readonly string K39C_VERSION = "0.20.00";
+        private static readonly string K39C_RELDATE = "2019-06-30";
         private static readonly string APP_SETTING_PATH = "Settings.xml";
         private static readonly string DIVA_PROCESS_NAME = "diva";
         private static readonly string PLUGIN_LOADER_NAME = "DllInjector.exe";
@@ -41,12 +41,12 @@ namespace K39C
 #if DEBUG
             Console.WriteLine("              ---- >>>> DEBUG_BUILD <<<< ----               ");
 #endif
-            Console.WriteLine("          PDAFT 7.10.00 Controller for S39 and K39          ");
+            Console.WriteLine("          PDAFT 1.01.00 Controller for S39 and K39          ");
             Console.WriteLine("------------------------------------------------------------");
             Console.WriteLine("   Minimal and less intrusive controller for real cabinet   ");
-            Console.WriteLine("     by rakisaionji, vladkorotnev, samyuu and lybxlpsv      ");
+            Console.WriteLine("                       by rakisaionji                       ");
             Console.WriteLine("------------------------------------------------------------");
-            Console.WriteLine(" > Codename : K39-PICO ");
+            Console.WriteLine(" > Codename : K39-COCO ");
             Console.WriteLine(" > Date     : {0} ", K39C_RELDATE);
             Console.WriteLine(" > Version  : {0} ", K39C_VERSION);
             Console.WriteLine("------------------------------------------------------------");
@@ -113,16 +113,16 @@ namespace K39C
                     case "t": // Touch Emulator
                         Settings.TouchEmulator = true;
                         break;
-                    case "s": // Scale Component
-                        Settings.ScaleComponent = true;
-                        break;
                     case "p": // Player Data
                         Settings.PlayerDataManager = true;
+                        break;
+                    case "c": // Module Manager
+                        Settings.PvModuleManager = true;
                         break;
                     case "f": // System Timer
                         Settings.SysTimer = true;
                         break;
-                    case "i": // FastLoader
+                    case "i": // Plugin Load
                         if (arg.Length < 4) break;
                         var i = arg.Substring(3).Split(',');
                         foreach (var f in i) Settings.DivaPlugins.Add(f.Trim());
@@ -184,7 +184,7 @@ namespace K39C
             LockConsole();
             LoadSettings();
 #if DEBUG
-            args = new string[] { "-t", "-s", "-p", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
+            args = new string[] { "-t", "-c", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
 #endif
             SaveSettings(args);
 
@@ -201,8 +201,12 @@ namespace K39C
 
             components.Add(new Watchdog(Manipulator, Settings));
             if (Settings.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
-            if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
-            if (Settings.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));
+            // if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
+            if (Settings.PlayerDataManager)
+            {
+                components.Add(new PlayerDataManager(Manipulator));
+                if (Settings.PvModuleManager) components.Add(new PvModuleManager(Manipulator));
+            }
 
             foreach (var component in components)
             {

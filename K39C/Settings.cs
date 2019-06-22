@@ -13,12 +13,10 @@ namespace K39C
         [XmlElement] public bool ApplyPatch { get; set; } = false;
         [XmlElement] public bool HideCredits { get; set; } = false;
         [XmlElement] public bool FreePlay { get; set; } = false;
-        [XmlElement] public bool TemporalAA { get; set; } = true;
-        [XmlElement] public bool MorphologicalAA { get; set; } = true;
         [XmlElement] public int WaitTime { get; set; } = 20;
         [XmlElement] public bool TouchEmulator { get; set; } = false;
-        [XmlElement] public bool ScaleComponent { get; set; } = false;
         [XmlElement] public bool PlayerDataManager { get; set; } = true;
+        [XmlElement] public bool PvModuleManager { get; set; } = false;
         [XmlElement] public bool SysTimer { get; set; } = false;
         [XmlElement] public string KeychipId { get; set; } = String.Empty;
         [XmlElement] public string MainId { get; set; } = String.Empty;
@@ -26,11 +24,10 @@ namespace K39C
 
         public void Reset()
         {
-            TemporalAA = true;
-            MorphologicalAA = true;
             TouchEmulator = false;
-            ScaleComponent = false;
+            // ScaleComponent = false;
             PlayerDataManager = true;
+            PvModuleManager = false;
             SysTimer = false;
             KeychipId = String.Empty;
             MainId = String.Empty;

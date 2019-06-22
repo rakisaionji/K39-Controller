@@ -9,8 +9,8 @@ namespace K39C
     {
         private const uint PAGE_EXECUTE_READWRITE = 0x40;
 
-        private const long RESOLUTION_WIDTH_ADDRESS = 0x0000000140EDA8BC;
-        private const long RESOLUTION_HEIGHT_ADDRESS = 0x0000000140EDA8C0;
+        private const long RESOLUTION_WIDTH_ADDRESS = 0x0000000140CEFB4C;
+        private const long RESOLUTION_HEIGHT_ADDRESS = 0x0000000140CEFB50;
 
         private const ProcessAccess PROCESS_ACCESS = ProcessAccess.PROCESS_ALL_ACCESS;
 
