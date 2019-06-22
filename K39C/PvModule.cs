@@ -14,7 +14,7 @@ namespace K39C
             Modules = new List<PvModule>();
         }
 
-        public PvModule Get(uint pvId)
+        public PvModule Get(int pvId)
         {
             foreach (var module in Modules) if (module.PvId == pvId) return module;
             return null;
@@ -24,7 +24,7 @@ namespace K39C
     public class PvModule
     {
         [XmlElement]
-        public uint PvId { get; set; }
+        public int PvId { get; set; }
 
         [XmlElement("CostumeId")]
         public List<int> Costumes { get; set; }

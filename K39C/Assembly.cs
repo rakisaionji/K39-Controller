@@ -1,4 +1,6 @@
-﻿namespace K39C
+﻿using System.IO;
+
+namespace K39C
 {
     public static class Assembly
     {
@@ -25,6 +27,12 @@
                 buffer[i] = NOP_OPCODE;
 
             return buffer;
+        }
+
+        public static string GetSaveDataPath(string fileName)
+        {
+            string directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            return Path.Combine(directory, fileName);
         }
     }
 }

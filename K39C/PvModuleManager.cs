@@ -11,14 +11,14 @@ namespace K39C
         private Thread thread;
         private bool stopFlag;
 
-        private const string MODULE_LIST_PATH = "PvCostume.xml";
+        private readonly string MODULE_LIST_PATH = Assembly.GetSaveDataPath("PvCostume.xml");
 
         private const long PLAYER_MODULE_ADDRESS = 0x0000000140E6E9B0L + 0x1C0L;
         private const long SEL_PVID_BYFRAME_ADDRESS = 0x0000000140EA5B14L;
         private const long CURRENT_SUB_STATE = 0x0000000140CEFABCL;
 
         private PvModules PvModules;
-        private uint lastPvId;
+        private int lastPvId;
 
         public PvModuleManager(Manipulator manipulator)
         {
@@ -48,8 +48,8 @@ namespace K39C
             var currentSubState = (SubGameState)Manipulator.ReadInt32(CURRENT_SUB_STATE);
             if (currentSubState == SubGameState.SUB_SELECTOR || currentSubState == SubGameState.SUB_GAME_SEL)
             {
-                var pvId = Manipulator.ReadUInt32(SEL_PVID_BYFRAME_ADDRESS);
-                if (pvId == lastPvId || pvId == UInt32.MaxValue) return;
+                var pvId = Manipulator.ReadInt32(SEL_PVID_BYFRAME_ADDRESS);
+                if (pvId == lastPvId || pvId == -1) return;
                 var pvMd = PvModules.Get(pvId);
                 if (pvMd == null) return;
                 var i = 0;
