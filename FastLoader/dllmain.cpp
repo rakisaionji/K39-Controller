@@ -1,6 +1,7 @@
 #include "Windows.h"
 #include "GameState.h"
 
+void *currentHook;
 const int updatesPerFrame = 39;
 GameState currentGameState;
 GameState previousGameState;
@@ -12,12 +13,9 @@ constexpr uint64_t UPDATE_TASKS_ADDRESS = 0x000000014006C570;
 constexpr uint64_t DATA_INIT_STATE_ADDRESS = 0x0000000140CEFA58;
 constexpr uint64_t SYSTEM_WARNING_ELAPSED_ADDRESS = (0x0000000140E67D90 + 0x68);
 
-void *InstallHook(void *source, void *destination, int length)
+void *InstallHook(void *source, void *destination)
 {
-	const DWORD minLen = 0xE;
-
-	if (length < minLen)
-		return NULL;
+	int length = 0xE;
 
 	BYTE stub[] =
 	{
@@ -42,17 +40,32 @@ void *InstallHook(void *source, void *destination, int length)
 	memcpy(stub + 6, &destination, 8);
 	memcpy(source, stub, sizeof(stub));
 
-	for (int i = minLen; i < length; i++) *(BYTE *)((DWORD_PTR)source + i) = 0x90;
-
 	VirtualProtect(source, length, oldProtect, &oldProtect);
 
 	return (void *)((DWORD_PTR)trampoline);
 }
 
+void RemoveHook(void *source, void *trampoline)
+{
+	int length = 0xE;
+
+	DWORD oldProtect;
+	VirtualProtect(source, length, PAGE_EXECUTE_READWRITE, &oldProtect);
+
+	memcpy(source, trampoline, length);
+
+	VirtualProtect(source, length, oldProtect, &oldProtect);
+
+	return;
+}
+
 void UpdateTick()
 {
 	if (dataInitialized)
+	{
+		RemoveHook((void *)ENGINE_UPDATE_HOOK_TARGET_ADDRESS, currentHook);
 		return;
+	}
 
 	previousGameState = currentGameState;
 	currentGameState = *(GameState *)CURRENT_GAME_STATE_ADDRESS;
@@ -82,7 +95,7 @@ void UpdateTick()
 
 void InstallHooks()
 {
-	InstallHook((void *)ENGINE_UPDATE_HOOK_TARGET_ADDRESS, (void *)UpdateTick, 0xE);
+	currentHook = InstallHook((void *)ENGINE_UPDATE_HOOK_TARGET_ADDRESS, (void *)UpdateTick);
 }
 
 extern "C" __declspec(dllexport) bool WINAPI DllMain(HINSTANCE hInstDll, DWORD fdwReason, LPVOID lpvReserved)
