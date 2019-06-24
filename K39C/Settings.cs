@@ -15,6 +15,7 @@ namespace K39C
         [XmlElement] public bool FreePlay { get; set; } = false;
         [XmlElement] public int WaitTime { get; set; } = 20;
         [XmlElement] public bool TouchEmulator { get; set; } = false;
+        [XmlElement] public bool ScaleComponent { get; set; } = false;
         [XmlElement] public bool PlayerDataManager { get; set; } = true;
         [XmlElement] public bool PvModuleManager { get; set; } = false;
         [XmlElement] public bool SysTimer { get; set; } = false;
@@ -25,7 +26,7 @@ namespace K39C
         public void Reset()
         {
             TouchEmulator = false;
-            // ScaleComponent = false;
+            ScaleComponent = false;
             PlayerDataManager = true;
             PvModuleManager = false;
             SysTimer = false;
