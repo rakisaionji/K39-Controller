@@ -34,7 +34,12 @@ namespace K39C
         private const long PLAYER_START_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x0D8L; // start_index
 
         private const long SET_DEFAULT_PLAYER_DATA_ADDRESS = 0x000000014033F5F0L;
-        // private const long MODSELECTOR_CHECK_FUNCTION_ERRRET_ADDRESS = 0x0000000140??????L;
+        private const long MODSELECTOR_SET_MODULE_ADDRESS = 0x00000001403F27CEL;
+        private const long MODSELECTOR_SET_ITEM_A_ADDRESS = 0x00000001403F2BC4L;
+        private const long MODSELECTOR_SET_ITEM_B_ADDRESS = 0x00000001403F3AA3L;
+        private const long MODSELECTOR_SET_ITEM_C_ADDRESS = 0x00000001403F3594L;
+        private const long MODSELECTOR_SET_ITEM_D_ADDRESS = 0x00000001403F3842L;
+        private const long MODSELECTOR_MISC_CHECK_ADDRESS = 0x00000001403F2332L;
         private const long MODSELECTOR_CLOSE_AFTER_MODULE = 0x00000001403F3F99L;
         private const long MODSELECTOR_CLOSE_AFTER_CUSTOMIZE = 0x00000001403F3E53L;
 
@@ -61,8 +66,21 @@ namespace K39C
         {
             // Prevent the PlayerData from being reset so we don't need to keep updating the PlayerData struct
             Manipulator.WritePatch(SET_DEFAULT_PLAYER_DATA_ADDRESS, new byte[] { 0xC3 }); // ret
-            // Allow player to select the module and extra item
-            // Manipulator.WritePatch(MODSELECTOR_CHECK_FUNCTION_ERRRET_ADDRESS, new byte[] { ?? });
+            // Allow player to select the module
+            Manipulator.WritePatch(MODSELECTOR_SET_MODULE_ADDRESS, new byte[] { 0xB0, 0x01 }); // test al, al --> mov al, 1
+            Manipulator.WritePatchNop(MODSELECTOR_SET_MODULE_ADDRESS + 0x2L, 0x34); // nop
+            // Allow player to select extra item
+            Manipulator.WritePatch(MODSELECTOR_SET_ITEM_A_ADDRESS, new byte[] { 0xB0, 0x01 }); // test al, al --> mov al, 1
+            Manipulator.WritePatchNop(MODSELECTOR_SET_ITEM_A_ADDRESS + 0x2L, 0x32); // nop
+            Manipulator.WritePatch(MODSELECTOR_SET_ITEM_B_ADDRESS, new byte[] { 0xB0, 0x01 }); // test al, al --> mov al, 1
+            Manipulator.WritePatchNop(MODSELECTOR_SET_ITEM_B_ADDRESS + 0x2L, 0x32); // nop
+            Manipulator.WritePatch(MODSELECTOR_SET_ITEM_C_ADDRESS, new byte[] { 0xB0, 0x01 }); // test al, al --> mov al, 1
+            Manipulator.WritePatchNop(MODSELECTOR_SET_ITEM_C_ADDRESS + 0x2L, 0x35); // nop
+            Manipulator.WritePatch(MODSELECTOR_SET_ITEM_D_ADDRESS, new byte[] { 0xB0, 0x01 }); // test al, al --> mov al, 1
+            Manipulator.WritePatchNop(MODSELECTOR_SET_ITEM_D_ADDRESS + 0x2L, 0x34); // nop
+            // Some miscellaneous check
+            Manipulator.WritePatch(MODSELECTOR_MISC_CHECK_ADDRESS, new byte[] { 0xB0, 0x01 }); // test al, al --> mov al, 1
+            Manipulator.WritePatchNop(MODSELECTOR_MISC_CHECK_ADDRESS + 0x2L, 0x32); // nop
             // Fix annoying behavior of closing after changing module or item
             Manipulator.WritePatch(MODSELECTOR_CLOSE_AFTER_MODULE, new byte[] { 0x85 }); // je --> jne
             Manipulator.WritePatch(MODSELECTOR_CLOSE_AFTER_CUSTOMIZE, new byte[] { 0x85 }); // je --> jne
