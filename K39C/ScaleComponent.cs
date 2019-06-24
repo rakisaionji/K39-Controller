@@ -11,6 +11,13 @@ namespace K39C
         private bool stopFlag;
         // private int consoleY;
 
+        ////////////////////////////////////////////////////////////////////////////////
+        // UI_CRAP_STRUCT_ADDRESS = 0x000000014CC611E8
+        // UI_ASPECT_RATIO = UI_CRAP_STRUCT_ADDRESS + 0xFE8
+        // UI_WIDTH_ADDRESS = UI_CRAP_STRUCT_ADDRESS + 0xFFC
+        // UI_HEIGHT_ADDRESS = UI_CRAP_STRUCT_ADDRESS + 0x1000
+        ////////////////////////////////////////////////////////////////////////////////
+
         private const long FB1_WIDTH_ADDRESS = 0x00000001411AD5F8;
         private const long FB1_HEIGHT_ADDRESS = 0x00000001411AD5FC;
 
@@ -27,9 +34,9 @@ namespace K39C
 
         private void InjectPatches()
         {
-            Manipulator.WritePatch(0x00000001404ACD24, new byte[] { 0x44, 0x8B, 0x0D, 0xD1, 0x08, 0xD0, 0x00 });
-            Manipulator.WritePatch(0x00000001404ACD2B, new byte[] { 0x44, 0x8B, 0x05, 0xC6, 0x08, 0xD0, 0x00 });
-            Manipulator.WritePatchNop(0x00000001405030A0, 6);
+            Manipulator.WritePatch(0x00000001404ACD24, new byte[] { 0x44, 0x8B, 0x0D, 0xD1, 0x08, 0xD0, 0x00 }); // mov r9d, [rbx+63Ch] --> mov r9d, cs:FB1_HEIGHT
+            Manipulator.WritePatch(0x00000001404ACD2B, new byte[] { 0x44, 0x8B, 0x05, 0xC6, 0x08, 0xD0, 0x00 }); // mov r8d, [rbx+638h] --> mov r8d, cs:FB1_WIDTH
+            Manipulator.WritePatchNop(0x00000001405030A0, 6); // Whatever shitty checking flag, only Froggy knows
         }
 
         public void Update()
@@ -43,13 +50,13 @@ namespace K39C
             Manipulator.WriteInt32(FB1_WIDTH_ADDRESS, hWindow.Right - hWindow.Left);
             Manipulator.WriteInt32(FB1_HEIGHT_ADDRESS, hWindow.Bottom - hWindow.Top);
 
-            Manipulator.WriteInt32(0x00000001411AD608, 0);
-            Manipulator.WriteInt32(0x0000000140EDA8E4, Manipulator.ReadInt32(0x0000000140EDA8BC));
-            Manipulator.WriteInt32(0x0000000140EDA8E8, Manipulator.ReadInt32(0x0000000140EDA8C0));
+            Manipulator.WriteInt32(0x00000001411AD608, 0); // Set that fucking whatever shitty checking flag to 0
+            Manipulator.WriteInt32(0x0000000140EDA8E4, Manipulator.ReadInt32(0x0000000140EDA8BC)); // RESOLUTION_WIDTH
+            Manipulator.WriteInt32(0x0000000140EDA8E8, Manipulator.ReadInt32(0x0000000140EDA8C0)); // RESOLUTION_HEIGHT
 
-            Manipulator.WriteSingle(0x00000001411A1900, 0);
-            Manipulator.WriteSingle(0x00000001411A1904, (float)Manipulator.ReadInt32(0x0000000140EDA8BC));
-            Manipulator.WriteSingle(0x00000001411A1908, (float)Manipulator.ReadInt32(0x0000000140EDA8C0));
+            Manipulator.WriteSingle(0x00000001411A1900, 0); // WTF FROGGY? 0x00000001411A1870 + 0x90
+            Manipulator.WriteSingle(0x00000001411A1904, (float)Manipulator.ReadInt32(0x0000000140EDA8BC)); // RESOLUTION_WIDTH
+            Manipulator.WriteSingle(0x00000001411A1908, (float)Manipulator.ReadInt32(0x0000000140EDA8C0)); // RESOLUTION_HEIGHT
         }
 
         public void Start()
