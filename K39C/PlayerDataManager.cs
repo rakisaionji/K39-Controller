@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
@@ -15,6 +16,7 @@ namespace K39C
 
         private const long PLAYER_DATA_ADDRESS = 0x0000000140E6E9B0L;
         private const long PLAYER_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x0E0L;
+        private const long PLAYER_LEVEL_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x100L;
         private const long PLAYER_LEVEL_ADDRESS = PLAYER_DATA_ADDRESS + 0x120L;
         private const long PLAYER_SKIN_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x548L;
         private const long PLAYER_PLATE_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x124L;
@@ -55,7 +57,9 @@ namespace K39C
         private int step = 0;
         private PlayerData playerData;
         private byte[] PlayerNameValue;
-        private Int32 PlayerNameAddress;
+        private byte[] LevelNameValue;
+        private long PlayerNameAddress;
+        private long LevelNameAddress;
 
         public PlayerDataManager(Manipulator manipulator)
         {
@@ -107,6 +111,10 @@ namespace K39C
         private void WritePlayerData()
         {
             Manipulator.Write(PlayerNameAddress, PlayerNameValue);
+            Manipulator.Write(LevelNameAddress, LevelNameValue);
+            Manipulator.WriteInt64(PLAYER_LEVEL_NAME_ADDRESS, LevelNameAddress);
+            Manipulator.WriteByte(PLAYER_DATA_ADDRESS + 0x110L, 0xFF); // thanks @vladkorotnev
+            Manipulator.WriteByte(PLAYER_DATA_ADDRESS + 0x118L, 0x1F); // thanks @vladkorotnev
             Manipulator.WriteInt32(PLAYER_SKIN_EQUIP_ADDRESS, playerData.SkinEquip);
             Manipulator.WriteInt32(PLAYER_LEVEL_ADDRESS, playerData.Level);
             Manipulator.WriteInt32(PLAYER_PLATE_ID_ADDRESS, playerData.PlateId);
@@ -153,7 +161,11 @@ namespace K39C
             PlayerNameValue = new byte[21];
             var b_name = Encoding.UTF8.GetBytes(playerData.PlayerName);
             Buffer.BlockCopy(b_name, 0, PlayerNameValue, 0, b_name.Length);
-            PlayerNameAddress = Manipulator.ReadInt32(PLAYER_NAME_ADDRESS);
+            PlayerNameAddress = Manipulator.ReadInt64(PLAYER_NAME_ADDRESS);
+            LevelNameValue = new byte[29];
+            var c_name = Encoding.UTF8.GetBytes(playerData.LevelName);
+            Buffer.BlockCopy(c_name, 0, LevelNameValue, 0, c_name.Length);
+            LevelNameAddress = (long)Marshal.UnsafeAddrOfPinnedArrayElement(LevelNameValue, 0);
             if (playerData.Level < 1) playerData.Level = 1;
             if (playerData.ActVol < 0 || playerData.ActVol > 100) playerData.ActVol = 100;
             if (playerData.HpVol < 0 || playerData.HpVol > 100) playerData.HpVol = 100;
