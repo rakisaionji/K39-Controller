@@ -27,7 +27,7 @@ namespace K39C
 
         private const long PLAYER_DATA_ADDRESS = 0x00000001411A8850L;
         private const long PLAYER_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x0E0L;
-        private const long PLAYER_LVNAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x100L;
+        private const long PLAYER_LEVEL_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x100L;
         private const long PLAYER_LEVEL_ADDRESS = PLAYER_DATA_ADDRESS + 0x120L;
         private const long PLAYER_SKIN_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x548L;
         private const long PLAYER_PLATE_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x124L;
@@ -109,7 +109,7 @@ namespace K39C
         {
             Manipulator.Write(PlayerNameAddress, PlayerNameValue);
             Manipulator.Write(LevelNameAddress, LevelNameValue);
-            Manipulator.WriteInt64(PLAYER_LVNAME_ADDRESS, LevelNameAddress);
+            Manipulator.WriteInt64(PLAYER_LEVEL_NAME_ADDRESS, LevelNameAddress);
             Manipulator.WriteByte(PLAYER_DATA_ADDRESS + 0x110L, 0xFF); // thanks @vladkorotnev
             Manipulator.WriteByte(PLAYER_DATA_ADDRESS + 0x118L, 0x1F); // thanks @vladkorotnev
             Manipulator.WriteInt32(PLAYER_SKIN_EQUIP_ADDRESS, playerData.SkinEquip);
