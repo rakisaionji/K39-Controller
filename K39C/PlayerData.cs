@@ -6,6 +6,7 @@ namespace K39C
     public class PlayerData
     {
         [XmlElement] public string PlayerName { get; set; } = "ＮＯ－ＮＡＭＥ";
+        [XmlElement] public string LevelName { get; set; } = "K39Cプレイヤー";
         [XmlElement] public int Level { get; set; } = 1;
         [XmlElement] public int PlateId { get; set; } = 0;
         [XmlElement] public int PlateEff { get; set; } = -1;

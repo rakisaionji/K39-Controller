@@ -13,7 +13,7 @@ namespace K39C
     class Program
     {
         private static readonly string K39C_VERSION = "2.20.00";
-        private static readonly string K39C_RELDATE = "2019-06-24";
+        private static readonly string K39C_RELDATE = "2019-06-28";
         private static readonly string APP_SETTING_PATH = Assembly.GetSaveDataPath("Settings.xml");
         private static readonly string DIVA_PROCESS_NAME = "diva";
         private static readonly string PLUGIN_LOADER_NAME = Assembly.GetSaveDataPath("DllInjector.exe");
