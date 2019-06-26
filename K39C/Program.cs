@@ -44,7 +44,7 @@ namespace K39C
             Console.WriteLine("            PDAFT 1.01.00 Loader for S39 and K39            ");
             Console.WriteLine("------------------------------------------------------------");
             Console.WriteLine("   Minimal and less intrusive controller for real cabinet   ");
-            Console.WriteLine("                       by rakisaionji                       ");
+            Console.WriteLine("     by rakisaionji, vladkorotnev, samyuu and lybxlpsv      ");
             Console.WriteLine("------------------------------------------------------------");
             Console.WriteLine(" > Codename : K39-COCO ");
             Console.WriteLine(" > Date     : {0} ", K39C_RELDATE);
