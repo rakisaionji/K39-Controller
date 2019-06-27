@@ -25,7 +25,7 @@ namespace K39C
         // 0x0000000140583C8C : 0x1 : 84 : 85 
         ////////////////////////////////////////////////////////////////////////////////
 
-        private const long PLAYER_DATA_ADDRESS = 0x00000001411A8850L;
+        private const long PLAYER_DATA_ADDRESS = 0x00000001410F2820L;
         private const long PLAYER_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x0E0L;
         private const long PLAYER_LEVEL_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x100L;
         private const long PLAYER_LEVEL_ADDRESS = PLAYER_DATA_ADDRESS + 0x120L;
@@ -39,23 +39,23 @@ namespace K39C
         private const long PLAYER_ACT_SLVOL_ADDRESS = PLAYER_DATA_ADDRESS + 0x13CL;
         private const long PLAYER_PV_SORT_KIND_ADDRESS = PLAYER_DATA_ADDRESS + 0x584L;
         private const long PLAYER_PWD_STAT_ADDRESS = PLAYER_DATA_ADDRESS + 0x668L;
-        private const long PLAYER_CLEAR_BORDER_ADDRESS = PLAYER_DATA_ADDRESS + 0xD94L; // clear_border_disp_bit
-        private const long PLAYER_RANK_DISP_ADDRESS = PLAYER_DATA_ADDRESS + 0xE34L; // interim_ranking_disp_flag
-        private const long PLAYER_OPTION_DISP_ADDRESS = PLAYER_DATA_ADDRESS + 0xE35L; // rhythm_game_opt_disp_flag
+        private const long PLAYER_CLEAR_BORDER_ADDRESS = PLAYER_DATA_ADDRESS + 0xD64L; // clear_border_disp_bit
+        private const long PLAYER_RANK_DISP_ADDRESS = PLAYER_DATA_ADDRESS + 0xE04L; // interim_ranking_disp_flag
+        private const long PLAYER_OPTION_DISP_ADDRESS = PLAYER_DATA_ADDRESS + 0xE05L; // rhythm_game_opt_disp_flag
 
         private const long PLAYER_PLAY_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x0D0L; // play_data_id
         private const long PLAYER_ACCEPT_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x0D4L; // accept_index
         private const long PLAYER_START_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x0D8L; // start_index
 
-        private const long SET_DEFAULT_PLAYER_DATA_ADDRESS = 0x00000001404A7370L;
-        private const long MODSELECTOR_CHECK_FUNCTION_ERRRET_ADDRESS = 0x00000001405869ADL;
-        private const long MODSELECTOR_CLOSE_AFTER_MODULE = 0x0000000140583B45L;
-        private const long MODSELECTOR_CLOSE_AFTER_CUSTOMIZE = 0x0000000140583C8CL;
+        private const long SET_DEFAULT_PLAYER_DATA_ADDRESS = 0x000000014048E690L;
+        private const long MODSELECTOR_CHECK_FUNCTION_ERRRET_ADDRESS = 0x0000000140564FEDL;
+        private const long MODSELECTOR_CLOSE_AFTER_MODULE = 0x00000001405621BDL;
+        private const long MODSELECTOR_CLOSE_AFTER_CUSTOMIZE = 0x0000000140562304L;
 
         private const long MODULE_TABLE_START = PLAYER_DATA_ADDRESS + 0x140;
         private const long ITEM_TABLE_START = PLAYER_DATA_ADDRESS + 0x2B8;
 
-        private const long CURRENT_SUB_STATE = 0x0000000140EDA82CL;
+        private const long CURRENT_SUB_STATE = 0x0000000140E8E09CL;
 
         private readonly string PLAYER_DATA_PATH = Assembly.GetSaveDataPath("PlayerData.xml");
 

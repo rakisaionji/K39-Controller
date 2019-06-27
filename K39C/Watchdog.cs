@@ -11,18 +11,13 @@ namespace K39C
         private Thread thread;
         private bool stopFlag;
 
-        // DISP MAIN ID    : 0x14CC94728 - 0x16
-        // SAVE MAIN ID    : 0x14CC94739 - 0x11
-        // DISP KEYCHIP ID : 0x14CC94E0C - 0x16
-        // SAVE KEYCHIP ID : 0x14CC94E1D - 0x11
-
-        private const long DISP_MAIN_ID = 0x000000014CC94728L; // 16
-        private const long SAVE_MAIN_ID = 0x000000014CC94739L; // 11
-        private const long TASK_MAIN_ID = 0x000000014CC93D19L; // 16
-        private const long DISP_KEYCHIP_ID = 0x000000014CC94E0CL; // 16
-        private const long SAVE_KEYCHIP_ID = 0x000000014CC94E1DL; // 11
-        private const long AIME_KEYCHIP_ID = 0x0000000140ED5B05L; // 11
-        private const long TASK_KEYCHIP_ID = 0x0000000140CDC431L; // 11
+        private const long DISP_MAIN_ID = 0x000000014C5C52D8L; // 16
+        private const long SAVE_MAIN_ID = 0x000000014C5C52E9L; // 11
+        private const long TASK_MAIN_ID = 0x000000014C5C48C9L; // 16
+        private const long DISP_KEYCHIP_ID = 0x000000014C5C59BCL; // 16
+        private const long SAVE_KEYCHIP_ID = 0x000000014C5C59CDL; // 11
+        private const long AIME_KEYCHIP_ID = 0x0000000140E89375L; // 11
+        private const long TASK_KEYCHIP_ID = 0x0000000140C8FCB1L; // 11
         private const string DEFAULT_FALLBACK_ID = "AAAA0000000";
 
         private Regex REGEX_MAIN_ID = new Regex(@"A[A-Z]{2}E\-\d{2}A\d{8}", RegexOptions.CultureInvariant);
@@ -32,7 +27,6 @@ namespace K39C
         private const int SYS_TIME_FACTOR = 60;
         private const int SEL_PV_FREEZE_TIME = 39;
         private const int SYS_TIMER_TIME = SEL_PV_FREEZE_TIME * SYS_TIME_FACTOR;
-        // private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
 
         public Watchdog(Manipulator manipulator, Settings settings)
         {
@@ -42,30 +36,14 @@ namespace K39C
 
         private void SysTimer_Start()
         {
-            // Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, SYS_TIMER_TIME);
-
             // 0x00000001405C5143:  mov qword ptr [rsi+0B38h], 3600
-            Manipulator.WriteInt32(0x1405C514AL, SYS_TIMER_TIME);
+            Manipulator.WriteInt32(0x1405A1DA9L, SYS_TIMER_TIME);
 
             // 0x00000001405BDFBF:  dec dword ptr [rbx+0B38h]
-            Manipulator.Write(0x1405BDFBFL, Assembly.GetNopInstructions(6));
+            Manipulator.Write(0x14059B21FL, Assembly.GetNopInstructions(6));
 
             // 0x00000001405C517A:  mov [rsi+0B38h], ecx
-            Manipulator.Write(0x1405C517AL, Assembly.GetNopInstructions(6));
-        }
-
-        private void SysTimer_Stop()
-        {
-            // Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, 0xE10);
-
-            // 0x00000001405C5143:  mov qword ptr [rsi+0B38h], 3600
-            // Manipulator.WriteInt32(0x1405C514AL, 0xE10);
-
-            // 0x00000001405BDFBF:  dec dword ptr [rbx+0B38h]
-            // Manipulator.Write(0x1405BDFBFL, new byte[] { 0xFF, 0x8B, 0x38, 0x0B, 0x00, 0x00 });
-
-            // 0x00000001405C517A:  mov [rsi+0B38h], ecx
-            // Manipulator.Write(0x1405C517AL, new byte[] { 0x89, 0x8E, 0x38, 0x0B, 0x00, 0x00 });
+            Manipulator.Write(0x1405A1DD9L, Assembly.GetNopInstructions(6));
         }
 
         private string MainId
@@ -127,12 +105,6 @@ namespace K39C
 
         public void Update()
         {
-            if (!Settings.TemporalAA)
-                // Disable Temporal AA by lybxlpsv
-                Manipulator.WriteByte(0x00000001411AB67C, 0);
-            if (!Settings.MorphologicalAA)
-                // Disable Morphological AA by lybxlpsv
-                Manipulator.WriteByte(0x00000001411AB680, 0);
             return;
         }
 

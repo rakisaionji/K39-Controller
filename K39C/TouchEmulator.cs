@@ -9,14 +9,12 @@ namespace K39C
         Manipulator Manipulator;
         // private int consoleY;
 
-        // private const long GLUT_CURSOR_ARROW = 0x000000014019341BL;
-        private const long TOUCH_PANEL_TASK_OBJECT = 0x000000014CC9EC30L;
+        private const long TOUCH_PANEL_TASK_OBJECT = 0x000000014C5CF7E0L;
         private const long TOUCH_PANEL_CONNECTION_STATE = TOUCH_PANEL_TASK_OBJECT + 0x78L;
         private const long TOUCH_PANEL_CONTACT_TYPE = TOUCH_PANEL_TASK_OBJECT + 0xA0L;
         private const long TOUCH_PANEL_X_POSITION = TOUCH_PANEL_TASK_OBJECT + 0x94L;
         private const long TOUCH_PANEL_Y_POSITION = TOUCH_PANEL_TASK_OBJECT + 0x98L;
         private const long TOUCH_PANEL_PRESSURE = TOUCH_PANEL_TASK_OBJECT + 0x9CL;
-        // private const long ADV_TOUCH_IS_TAPPED = 0x140EC52D0L + 0x70L;
 
         public TouchEmulator(Manipulator manipulator)
         {
