@@ -111,8 +111,8 @@ namespace K39C
             Manipulator.Write(PlayerNameAddress, PlayerNameValue);
             Manipulator.Write(LevelNameAddress, LevelNameValue);
             Manipulator.WriteInt64(PLAYER_LEVEL_NAME_ADDRESS, LevelNameAddress);
-            Manipulator.WriteByte(PLAYER_DATA_ADDRESS + 0x110L, 0xFF); // thanks @vladkorotnev
-            Manipulator.WriteByte(PLAYER_DATA_ADDRESS + 0x118L, 0x1F); // thanks @vladkorotnev
+            Manipulator.WriteByte(PLAYER_LEVEL_NAME_ADDRESS + 0x10L, 0xFF); // thanks @vladkorotnev
+            Manipulator.WriteByte(PLAYER_LEVEL_NAME_ADDRESS + 0x18L, 0x1F); // thanks @vladkorotnev
             Manipulator.WriteInt32(PLAYER_SKIN_EQUIP_ADDRESS, playerData.SkinEquip);
             Manipulator.WriteInt32(PLAYER_LEVEL_ADDRESS, playerData.Level);
             Manipulator.WriteInt32(PLAYER_PLATE_ID_ADDRESS, playerData.PlateId);
