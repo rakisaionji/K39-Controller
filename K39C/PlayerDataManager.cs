@@ -52,10 +52,8 @@ namespace K39C
         private const long MODSELECTOR_CLOSE_AFTER_MODULE = 0x0000000140583B45L;
         private const long MODSELECTOR_CLOSE_AFTER_CUSTOMIZE = 0x0000000140583C8CL;
 
-        private const long MODULE_TABLE_START = 0x00000001411A8990L;
-        private const long MODULE_TABLE_END = 0x00000001411A8A0FL;
-        private const long ITEM_TABLE_START = 0x00000001411A8B08L;
-        private const long ITEM_TABLE_END = 0x00000001411A8B87L;
+        private const long MODULE_TABLE_START = PLAYER_DATA_ADDRESS + 0x140;
+        private const long ITEM_TABLE_START = PLAYER_DATA_ADDRESS + 0x2B8;
 
         private const long CURRENT_SUB_STATE = 0x0000000140EDA82CL;
 
@@ -169,14 +167,8 @@ namespace K39C
             // use_card = 1 // Required to allow for module selection
             Manipulator.WriteInt32(PLAYER_DATA_ADDRESS, 1);
             // Allow player to select the module and extra items (by vladkorotnev)
-            for (long i = MODULE_TABLE_START; i <= MODULE_TABLE_END; i++)
-            {
-                Manipulator.WriteByte(i, 0xFF);
-            }
-            for (long i = ITEM_TABLE_START; i <= ITEM_TABLE_END; i++)
-            {
-                Manipulator.WriteByte(i, 0xFF);
-            }
+            for (long i = 0; i < 128; i++) Manipulator.WriteByte(MODULE_TABLE_START + i, 0xFF);
+            for (long i = 0; i < 128; i++) Manipulator.WriteByte(ITEM_TABLE_START + i, 0xFF);
             // Display interim rank and rhythm options (despite it is not yet fully functional)
             Manipulator.WriteByte(PLAYER_RANK_DISP_ADDRESS, 1);
             Manipulator.WriteByte(PLAYER_OPTION_DISP_ADDRESS, 1);
