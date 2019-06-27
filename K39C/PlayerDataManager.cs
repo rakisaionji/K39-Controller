@@ -165,7 +165,7 @@ namespace K39C
             if (playerData.ActVol < 0 || playerData.ActVol > 100) playerData.ActVol = 100;
             if (playerData.HpVol < 0 || playerData.HpVol > 100) playerData.HpVol = 100;
             // use_card = 1 // Required to allow for module selection
-            Manipulator.WriteInt32(PLAYER_DATA_ADDRESS, 1);
+            if (playerData.UseCard) Manipulator.WriteInt32(PLAYER_DATA_ADDRESS, 1);
             // Allow player to select the module and extra items (by vladkorotnev)
             for (long i = 0; i < 128; i++) Manipulator.WriteByte(MODULE_TABLE_START + i, 0xFF);
             for (long i = 0; i < 128; i++) Manipulator.WriteByte(ITEM_TABLE_START + i, 0xFF);

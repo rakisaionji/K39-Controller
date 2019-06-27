@@ -5,6 +5,7 @@ namespace K39C
     [XmlRoot]
     public class PlayerData
     {
+        [XmlElement] public bool UseCard { get; set; } = true;
         [XmlElement] public string PlayerName { get; set; } = "ＮＯ－ＮＡＭＥ";
         [XmlElement] public string LevelName { get; set; } = "K39Cプレイヤー";
         [XmlElement] public int Level { get; set; } = 1;
