@@ -205,8 +205,11 @@ namespace K39C
             components.Add(new Watchdog(Manipulator, Settings));
             if (Settings.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
             if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
-            if (Settings.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));
-            if (Settings.PvModuleManager) components.Add(new PvModuleManager(Manipulator));
+            if (Settings.PlayerDataManager)
+            {
+                components.Add(new PlayerDataManager(Manipulator));
+                if (Settings.PvModuleManager) components.Add(new PvModuleManager(Manipulator));
+            }
 
             foreach (var component in components)
             {
