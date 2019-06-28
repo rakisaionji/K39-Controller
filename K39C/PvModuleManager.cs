@@ -13,6 +13,7 @@ namespace K39C
 
         private readonly string MODULE_LIST_PATH = Assembly.GetSaveDataPath("PvCostume.xml");
 
+        private const long SET_DEFAULT_PLAYER_DATA_ADDRESS = 0x000000014033F5F0L;
         private const long PLAYER_MODULE_ADDRESS = 0x0000000140E6E9B0L + 0x1C0L;
         private const long SEL_PVID_BYFRAME_ADDRESS = 0x0000000140EA5B14L;
         private const long CURRENT_SUB_STATE = 0x0000000140CEFABCL;
@@ -23,6 +24,12 @@ namespace K39C
         public PvModuleManager(Manipulator manipulator)
         {
             Manipulator = manipulator;
+        }
+
+        private void InjectPatches()
+        {
+            // Prevent the PlayerData from being reset so we don't need to keep updating the PlayerData struct
+            Manipulator.WritePatch(SET_DEFAULT_PLAYER_DATA_ADDRESS, new byte[] { 0xC3 }); // ret
         }
 
         private void LoadPvModules()
@@ -69,6 +76,7 @@ namespace K39C
 
         public void Start()
         {
+            InjectPatches();
             if (thread != null) return;
             stopFlag = false;
             lastPvId = 0;
