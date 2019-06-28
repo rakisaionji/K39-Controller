@@ -7,7 +7,7 @@
     <ProjectGuid>{88EB05C4-6565-4D19-80AB-F75E3D1A5198}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>K39C</RootNamespace>
-    <AssemblyName>K39C-PICO</AssemblyName>
+    <AssemblyName>K39C-NICO</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -53,6 +53,8 @@
     <Compile Include="PlayerDataManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PvModule.cs" />
+    <Compile Include="PvModuleManager.cs" />
     <Compile Include="ScaleComponent.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TouchEmulator.cs" />
@@ -64,6 +66,9 @@
   <ItemGroup>
     <Content Include="PlayerData.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PvCostume.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

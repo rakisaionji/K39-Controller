@@ -119,6 +119,9 @@ namespace K39C
                     case "p": // Player Data
                         Settings.PlayerDataManager = true;
                         break;
+                    case "c": // Module Manager
+                        Settings.PvModuleManager = true;
+                        break;
                     case "f": // System Timer
                         Settings.SysTimer = true;
                         break;
@@ -184,7 +187,7 @@ namespace K39C
             LockConsole();
             LoadSettings();
 #if DEBUG
-            args = new string[] { "-t", "-s", "-p", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
+            args = new string[] { "-t", "-s", "-p", "-c", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
 #endif
             SaveSettings(args);
 
@@ -202,7 +205,11 @@ namespace K39C
             components.Add(new Watchdog(Manipulator, Settings));
             if (Settings.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
             if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
-            if (Settings.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));
+            if (Settings.PlayerDataManager)
+            {
+                components.Add(new PlayerDataManager(Manipulator));
+                if (Settings.PvModuleManager) components.Add(new PvModuleManager(Manipulator));
+            }
 
             foreach (var component in components)
             {

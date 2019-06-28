@@ -19,6 +19,7 @@ namespace K39C
         [XmlElement] public bool TouchEmulator { get; set; } = false;
         [XmlElement] public bool ScaleComponent { get; set; } = false;
         [XmlElement] public bool PlayerDataManager { get; set; } = true;
+        [XmlElement] public bool PvModuleManager { get; set; } = false;
         [XmlElement] public bool SysTimer { get; set; } = false;
         [XmlElement] public string KeychipId { get; set; } = String.Empty;
         [XmlElement] public string MainId { get; set; } = String.Empty;
@@ -31,6 +32,7 @@ namespace K39C
             TouchEmulator = false;
             ScaleComponent = false;
             PlayerDataManager = true;
+            PvModuleManager = true;
             SysTimer = false;
             KeychipId = String.Empty;
             MainId = String.Empty;

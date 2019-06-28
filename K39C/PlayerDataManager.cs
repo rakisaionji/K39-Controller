@@ -80,9 +80,6 @@ namespace K39C
             // Fix annoying behavior of closing after changing module or item  (by vladkorotnev)
             Manipulator.WritePatch(MODSELECTOR_CLOSE_AFTER_MODULE, new byte[] { 0x85 }); // je --> jne
             Manipulator.WritePatch(MODSELECTOR_CLOSE_AFTER_CUSTOMIZE, new byte[] { 0x85 }); // je --> jne
-            // Enable module selection without card (by lybxlpsv) [ WIP / NG ]
-            // Manipulator.WritePatch(0x00000001405C5133, new byte[] { 0x74 });
-            // Manipulator.WritePatch(0x00000001405BC8E7, new byte[] { 0x74 });
         }
 
         private void ReadPlayerData()

@@ -12,6 +12,7 @@
   <TouchEmulator>false</TouchEmulator>
   <ScaleComponent>false</ScaleComponent>
   <PlayerDataManager>true</PlayerDataManager>
+  <PvModuleManager>true</PvModuleManager>
   <SysTimer>true</SysTimer>
   <KeychipId></KeychipId>
   <MainId></MainId>
