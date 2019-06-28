@@ -107,9 +107,9 @@ namespace K39C
 
         public void Start()
         {
-            if (Settings.SysTimer) SysTimer_Start();
-            KeychipId = Settings.KeychipId.Trim();
-            MainId = Settings.MainId.Trim();
+            if (Settings.System.SysTimer) SysTimer_Start();
+            KeychipId = Settings.System.KeychipId.Trim();
+            MainId = Settings.System.MainId.Trim();
 
             if (thread != null) return;
             stopFlag = false;
@@ -127,10 +127,10 @@ namespace K39C
 
         public void Update()
         {
-            if (!Settings.TemporalAA)
+            if (!Settings.System.TemporalAA)
                 // Disable Temporal AA by lybxlpsv
                 Manipulator.WriteByte(0x00000001411AB67C, 0);
-            if (!Settings.MorphologicalAA)
+            if (!Settings.System.MorphologicalAA)
                 // Disable Morphological AA by lybxlpsv
                 Manipulator.WriteByte(0x00000001411AB680, 0);
             return;

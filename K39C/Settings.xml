@@ -1,20 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <DivaPath>F:\SBZV\diva.exe</DivaPath>
-  <Arguments>-w -aa</Arguments>
-  <GlutCursor>RIGHT_ARROW</GlutCursor>
-  <ApplyPatch>true</ApplyPatch>
-  <HideCredits>true</HideCredits>
-  <FreePlay>true</FreePlay>
-  <TemporalAA>true</TemporalAA>
-  <MorphologicalAA>true</MorphologicalAA>
-  <WaitTime>20</WaitTime>
-  <TouchEmulator>false</TouchEmulator>
-  <ScaleComponent>false</ScaleComponent>
-  <PlayerDataManager>true</PlayerDataManager>
-  <SysTimer>true</SysTimer>
-  <KeychipId></KeychipId>
-  <MainId></MainId>
+  <Executable>
+    <DivaPath>F:\SBZV\diva.exe</DivaPath>
+    <Arguments>-w -aa</Arguments>
+    <ApplyPatch>true</ApplyPatch>
+    <WaitTime>20</WaitTime>
+  </Executable>
+  <System>
+    <KeychipId></KeychipId>
+    <MainId></MainId>
+    <SysTimer>true</SysTimer>
+    <TemporalAA>true</TemporalAA>
+    <MorphologicalAA>true</MorphologicalAA>
+  </System>
+  <Components>
+    <TouchEmulator>false</TouchEmulator>
+    <ScaleComponent>false</ScaleComponent>
+    <PlayerDataManager>false</PlayerDataManager>
+  </Components>
+  <DivaPatches>
+    <GlutCursor>NONE</GlutCursor>
+    <FreePlay>false</FreePlay>
+    <HideCredits>false</HideCredits>
+    <HidePvUi>false</HidePvUi>
+    <HidePvMark>false</HidePvMark>
+    <HideLyrics>false</HideLyrics>
+    <HideSeBtn>false</HideSeBtn>
+    <HideVolume>false</HideVolume>
+    <CardIcon>DEFAULT</CardIcon>
+    <NetIcon>DEFAULT</NetIcon>
+  </DivaPatches>
   <DivaPlugins>
     <DivaPlugin>FastLoader</DivaPlugin>
   </DivaPlugins>

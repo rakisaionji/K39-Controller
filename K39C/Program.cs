@@ -12,8 +12,8 @@ namespace K39C
 {
     class Program
     {
-        private static readonly string K39C_VERSION = "2.20.00";
-        private static readonly string K39C_RELDATE = "2019-06-28";
+        private static readonly string K39C_VERSION = "2.30.00";
+        private static readonly string K39C_RELDATE = "2019-07-07";
         private static readonly string APP_SETTING_PATH = Assembly.GetSaveDataPath("Settings.xml");
         private static readonly string DIVA_PROCESS_NAME = "diva";
         private static readonly string PLUGIN_LOADER_NAME = Assembly.GetSaveDataPath("DllInjector.exe");
@@ -111,29 +111,29 @@ namespace K39C
                 switch (cmd)
                 {
                     case "t": // Touch Emulator
-                        Settings.TouchEmulator = true;
+                        Settings.Components.TouchEmulator = true;
                         break;
                     case "s": // Scale Component
-                        Settings.ScaleComponent = true;
+                        Settings.Components.ScaleComponent = true;
                         break;
                     case "p": // Player Data
-                        Settings.PlayerDataManager = true;
+                        Settings.Components.PlayerDataManager = true;
                         break;
                     case "f": // System Timer
-                        Settings.SysTimer = true;
+                        Settings.System.SysTimer = true;
                         break;
-                    case "i": // FastLoader
+                    case "i": // Plugin Loader
                         if (arg.Length < 4) break;
                         var i = arg.Substring(3).Split(',');
                         foreach (var f in i) Settings.DivaPlugins.Add(f.Trim());
                         break;
                     case "k": // Keychip Id
                         if (arg.Length < 4) break;
-                        Settings.KeychipId = arg.Substring(3).Trim().ToUpper();
+                        Settings.System.KeychipId = arg.Substring(3).Trim().ToUpper();
                         break;
                     case "m": // Main Id
                         if (arg.Length < 4) break;
-                        Settings.MainId = arg.Substring(3).Trim().ToUpper();
+                        Settings.System.MainId = arg.Substring(3).Trim().ToUpper();
                         break;
                     default:
                         break;
@@ -143,16 +143,16 @@ namespace K39C
 
         static void StartDiva()
         {
-            var pa = Settings.DivaPath.Trim();
+            var pa = Settings.Executable.DivaPath.Trim();
             if (String.IsNullOrEmpty(pa) || !File.Exists(pa)) return;
 
             var fi = new FileInfo(pa);
-            var ar = Settings.Arguments;
+            var ar = Settings.Executable.Arguments;
             var wd = fi.DirectoryName;
             if (!(Manipulator.CreateProcess(pa, ar, wd, out IntPtr ht))) return;
             if (!Manipulator.TryAttachToProcess(DIVA_PROCESS_NAME)) return;
 
-            if (Settings.ApplyPatch)
+            if (Settings.Executable.ApplyPatch)
             {
                 var pt = new DivaPatcher(Manipulator, Settings);
                 pt.ApplyPatches();
@@ -164,9 +164,11 @@ namespace K39C
 
         static void WaitForDiva()
         {
-            if (Settings.WaitTime < 0) Settings.WaitTime = 0;
-            if (Settings.WaitTime > 60) Settings.WaitTime = 60;
-            for (int i = 0; i < Settings.WaitTime; i++)
+            var waitTime = Settings.Executable.WaitTime;
+            if (waitTime < 0) waitTime = 0;
+            if (waitTime > 60) waitTime = 60;
+            Settings.Executable.WaitTime = waitTime;
+            for (int i = 0; i < waitTime; i++)
             {
                 Console.CursorTop = consoleY;
                 Console.WriteLine("    DIVA HOOK        : WAIT " + i);
@@ -200,9 +202,9 @@ namespace K39C
             Manipulator.SetMainWindowActive();
 
             components.Add(new Watchdog(Manipulator, Settings));
-            if (Settings.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
-            if (Settings.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
-            if (Settings.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));
+            if (Settings.Components.TouchEmulator) components.Add(new TouchEmulator(Manipulator));
+            if (Settings.Components.ScaleComponent) components.Add(new ScaleComponent(Manipulator));
+            if (Settings.Components.PlayerDataManager) components.Add(new PlayerDataManager(Manipulator));
 
             foreach (var component in components)
             {

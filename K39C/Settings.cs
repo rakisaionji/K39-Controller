@@ -7,34 +7,76 @@ namespace K39C
     [XmlRoot]
     public class Settings
     {
-        [XmlElement] public string DivaPath { get; set; } = String.Empty;
-        [XmlElement] public string Arguments { get; set; } = String.Empty;
-        [XmlElement] public GlutCursor GlutCursor { get; set; } = GlutCursor.NONE;
-        [XmlElement] public bool ApplyPatch { get; set; } = false;
-        [XmlElement] public bool HideCredits { get; set; } = false;
-        [XmlElement] public bool FreePlay { get; set; } = false;
-        [XmlElement] public bool TemporalAA { get; set; } = true;
-        [XmlElement] public bool MorphologicalAA { get; set; } = true;
-        [XmlElement] public int WaitTime { get; set; } = 20;
-        [XmlElement] public bool TouchEmulator { get; set; } = false;
-        [XmlElement] public bool ScaleComponent { get; set; } = false;
-        [XmlElement] public bool PlayerDataManager { get; set; } = true;
-        [XmlElement] public bool SysTimer { get; set; } = false;
-        [XmlElement] public string KeychipId { get; set; } = String.Empty;
-        [XmlElement] public string MainId { get; set; } = String.Empty;
+        [XmlElement] public DivaExe Executable { get; set; } = new DivaExe();
+        [XmlElement] public DivaSys System { get; set; } = new DivaSys();
+        [XmlElement] public DivaComp Components { get; set; } = new DivaComp();
+        [XmlElement] public DivaPatch DivaPatches { get; set; } = new DivaPatch();
         [XmlArray("DivaPlugins"), XmlArrayItem("DivaPlugin")] public List<string> DivaPlugins { get; set; } = new List<string>();
+
+        [Serializable]
+        public class DivaExe
+        {
+            [XmlElement] public string DivaPath { get; set; } = String.Empty;
+            [XmlElement] public string Arguments { get; set; } = String.Empty;
+            [XmlElement] public bool ApplyPatch { get; set; } = true;
+            [XmlElement] public int WaitTime { get; set; } = 20;
+        }
+
+        [Serializable]
+        public class DivaComp
+        {
+            [XmlElement] public bool TouchEmulator { get; set; } = false;
+            [XmlElement] public bool ScaleComponent { get; set; } = false;
+            [XmlElement] public bool PlayerDataManager { get; set; } = false;
+        }
+
+        [Serializable]
+        public class DivaSys
+        {
+            [XmlElement] public string KeychipId { get; set; } = String.Empty;
+            [XmlElement] public string MainId { get; set; } = String.Empty;
+            [XmlElement] public bool SysTimer { get; set; } = false;
+            [XmlElement] public bool TemporalAA { get; set; } = true;
+            [XmlElement] public bool MorphologicalAA { get; set; } = true;
+        }
+
+        [Serializable]
+        public class DivaPatch
+        {
+            [XmlElement] public GlutCursor GlutCursor { get; set; } = GlutCursor.NONE;
+            [XmlElement] public bool FreePlay { get; set; } = false;
+            [XmlElement] public bool HideCredits { get; set; } = false;
+
+            // Other Features by somewhatlurker
+            [XmlElement] public bool HidePvUi { get; set; } = false;
+            [XmlElement] public bool HidePvMark { get; set; } = false;
+            [XmlElement] public bool HideLyrics { get; set; } = false;
+            [XmlElement] public bool HideSeBtn { get; set; } = false;
+            [XmlElement] public bool HideVolume { get; set; } = false;
+            [XmlElement] public StatusIcon CardIcon { get; set; } = StatusIcon.DEFAULT;
+            [XmlElement] public StatusIcon NetIcon { get; set; } = StatusIcon.DEFAULT;
+        }
 
         public void Reset()
         {
-            TemporalAA = true;
-            MorphologicalAA = true;
-            TouchEmulator = false;
-            ScaleComponent = false;
-            PlayerDataManager = true;
-            SysTimer = false;
-            KeychipId = String.Empty;
-            MainId = String.Empty;
+            System.KeychipId = String.Empty;
+            System.MainId = String.Empty;
+            System.SysTimer = false;
+            System.TemporalAA = true;
+            System.MorphologicalAA = true;
+            Components.TouchEmulator = false;
+            Components.ScaleComponent = false;
+            Components.PlayerDataManager = true;
             DivaPlugins = new List<string>();
         }
+    }
+
+    public enum StatusIcon
+    {
+        DEFAULT,
+        ERROR,
+        WARNING,
+        OK,
+        HIDDEN
     }
 }
