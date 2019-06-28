@@ -243,7 +243,7 @@ namespace K39C
                 while (!stopFlag)
                 {
                     Update();
-                    Thread.Sleep(100);
+                    Thread.Sleep(16);
                 }
                 stopFlag = false;
             }
