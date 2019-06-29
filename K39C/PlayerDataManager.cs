@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
@@ -157,8 +156,7 @@ namespace K39C
             LevelNameValue = new byte[29];
             var c_name = Encoding.UTF8.GetBytes(playerData.LevelName);
             Buffer.BlockCopy(c_name, 0, LevelNameValue, 0, c_name.Length);
-            LevelNameAddress = (long)Marshal.UnsafeAddrOfPinnedArrayElement(LevelNameValue, 0);
-            Manipulator.WriteInt64(PLAYER_LEVEL_NAME_ADDRESS, LevelNameAddress);
+            LevelNameAddress = Manipulator.ReadInt64(PLAYER_LEVEL_NAME_ADDRESS);
             Manipulator.WriteByte(PLAYER_LEVEL_NAME_ADDRESS + 0x10L, 0xFF); // thanks @vladkorotnev
             Manipulator.WriteByte(PLAYER_LEVEL_NAME_ADDRESS + 0x18L, 0x1F); // thanks @vladkorotnev
             if (playerData.Level < 1) playerData.Level = 1;
@@ -243,7 +241,7 @@ namespace K39C
                 while (!stopFlag)
                 {
                     Update();
-                    Thread.Sleep(16);
+                    Thread.Sleep(100);
                 }
                 stopFlag = false;
             }

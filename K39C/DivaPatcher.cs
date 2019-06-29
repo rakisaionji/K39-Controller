@@ -59,7 +59,14 @@ namespace K39C
                 Manipulator.WritePatch(0x00000001403BAC2E, new byte[] { 0xD8 }); // CREDIT(S)
                 Manipulator.WritePatch(0x00000001403BABEF, new byte[] { 0x06, 0xB6 }); // FREE PLAY
             }
-
+            if (Settings.Components.PlayerDataManager)
+            {
+                // Shitty way to initialize Level Name by rakisaionji
+                Manipulator.WritePatch(0x0000000140205143, new byte[] {
+                    0xE8, 0xC8, 0x27, 0xE0, 0xFF, 0x48, 0x8D, 0x8F, 0x00, 0x01, 0x00, 0x00, 0x44, 0x8D, 0x45, 0x1E,
+                    0x48, 0x8D, 0x15, 0x5E, 0x60, 0x7D, 0x00, 0xE8, 0xB1, 0x27, 0xE0, 0xFF });
+                Manipulator.WritePatchNop(0x000000014020515F, 20);
+            }
             // Hide Data Loading text when use_card = 1 by rakisaionji
             Manipulator.WritePatch(0x00000001405BA42D, new byte[] { 0xF7 });
             Manipulator.WritePatch(0x00000001405BB95C, new byte[] { 0x6F });
