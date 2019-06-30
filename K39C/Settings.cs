@@ -25,10 +25,7 @@ namespace K39C
 
             public bool IsCustomRes()
             {
-                foreach (var item in CustomResArgs)
-                {
-                    if (Arguments.Contains(item)) return true;
-                }
+                foreach (var item in CustomResArgs) if (Arguments.Contains(item)) return true;
                 return false;
             }
         }
@@ -49,6 +46,7 @@ namespace K39C
             [XmlElement] public bool SysTimer { get; set; } = false;
             [XmlElement] public bool TemporalAA { get; set; } = true;
             [XmlElement] public bool MorphologicalAA { get; set; } = true;
+            [XmlElement] public ErrorDisplay ErrorDisplay { get; set; } = ErrorDisplay.SKIP_CARD;
         }
 
         [Serializable]
@@ -88,6 +86,13 @@ namespace K39C
         ERROR,
         WARNING,
         OK,
+        HIDDEN
+    }
+
+    public enum ErrorDisplay
+    {
+        DEFAULT,
+        SKIP_CARD,
         HIDDEN
     }
 }

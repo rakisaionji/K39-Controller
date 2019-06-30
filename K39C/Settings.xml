@@ -12,6 +12,7 @@
     <SysTimer>true</SysTimer>
     <TemporalAA>true</TemporalAA>
     <MorphologicalAA>true</MorphologicalAA>
+    <ErrorDisplay>SKIP_CARD</ErrorDisplay>
   </System>
   <Components>
     <TouchEmulator>false</TouchEmulator>
