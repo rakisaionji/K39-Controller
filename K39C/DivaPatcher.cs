@@ -74,6 +74,10 @@ namespace K39C
             Manipulator.WritePatch(0x000000014066CE9C, new byte[] { 0x05 }); // Size
             Manipulator.WritePatch(0x000000014066CEA3, new byte[] { 0xF1, 0x1D, 0x39 });
             Manipulator.WritePatch(0x000000014066CEAE, new byte[] { 0x05 }); // Size
+            // Touch effect is annoying without Scale Component in other resolutions
+            // It's not cool, just yeet it for fuck's sake, by rakisaionji
+            if (Settings.Executable.IsCustomRes() && !Settings.Components.ScaleComponent)
+                Manipulator.WritePatch(0x00000001406A1FD7, new byte[] { 0xEE });
             // Other Features by somewhatlurker, improved by rakisaionji
             var cardStatus = Settings.DivaPatches.CardIcon;
             if (cardStatus != StatusIcon.DEFAULT)

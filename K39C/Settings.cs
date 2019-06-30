@@ -20,6 +20,17 @@ namespace K39C
             [XmlElement] public string Arguments { get; set; } = String.Empty;
             [XmlElement] public bool ApplyPatch { get; set; } = true;
             [XmlElement] public int WaitTime { get; set; } = 20;
+
+            public static string[] CustomResArgs = { "-qvga", "-vga", "-wvga", "-svga", "-xga", "-hdtv720", "-hdtv720_dbd", "-wxga", "-wxga_dbd", "-wxga2", "-uxga", "-hdtv1080", "-wuxga", "-wqhd", "-wqxga" };
+
+            public bool IsCustomRes()
+            {
+                foreach (var item in CustomResArgs)
+                {
+                    if (Arguments.Contains(item)) return true;
+                }
+                return false;
+            }
         }
 
         [Serializable]

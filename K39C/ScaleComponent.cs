@@ -10,6 +10,7 @@ namespace K39C
         private Thread thread;
         private bool stopFlag;
         // private int consoleY;
+        private RECT lhWindow;
 
         ////////////////////////////////////////////////////////////////////////////////
         // UI_CRAP_STRUCT_ADDRESS = 0x000000014CC611E8
@@ -43,6 +44,9 @@ namespace K39C
         {
             Manipulator.GetClientRect(Manipulator.AttachedProcess.MainWindowHandle, out RECT hWindow);
 
+            if (hWindow.Equals(lhWindow)) return;
+            if (hWindow.Bottom - hWindow.Top == 0) return;
+
             Manipulator.WriteSingle(UI_ASPECT_RATIO, (float)(hWindow.Right - hWindow.Left) / (float)(hWindow.Bottom - hWindow.Top));
             Manipulator.WriteDouble(FB_ASPECT_RATIO, (double)(hWindow.Right - hWindow.Left) / (double)(hWindow.Bottom - hWindow.Top));
             Manipulator.WriteSingle(UI_WIDTH_ADDRESS, hWindow.Right - hWindow.Left);
@@ -57,6 +61,8 @@ namespace K39C
             Manipulator.WriteSingle(0x00000001411A1900, 0); // WTF FROGGY? 0x00000001411A1870 + 0x90
             Manipulator.WriteSingle(0x00000001411A1904, (float)Manipulator.ReadInt32(0x0000000140EDA8BC)); // RESOLUTION_WIDTH
             Manipulator.WriteSingle(0x00000001411A1908, (float)Manipulator.ReadInt32(0x0000000140EDA8C0)); // RESOLUTION_HEIGHT
+
+            lhWindow = hWindow;
         }
 
         public void Start()
