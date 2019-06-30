@@ -70,7 +70,10 @@ namespace K39C
             // Hide Data Loading text when use_card = 1 by rakisaionji
             Manipulator.WritePatch(0x00000001405BA42D, new byte[] { 0xF7 });
             Manipulator.WritePatch(0x00000001405BB95C, new byte[] { 0x6F });
-
+            // Change mdata path from "C:/Mount/Option" to "mdata", revised by rakisaionji
+            Manipulator.WritePatch(0x000000014066CE9C, new byte[] { 0x05 }); // Size
+            Manipulator.WritePatch(0x000000014066CEA3, new byte[] { 0xF1, 0x1D, 0x39 });
+            Manipulator.WritePatch(0x000000014066CEAE, new byte[] { 0x05 }); // Size
             // Other Features by somewhatlurker, improved by rakisaionji
             var cardStatus = Settings.DivaPatches.CardIcon;
             if (cardStatus != StatusIcon.DEFAULT)

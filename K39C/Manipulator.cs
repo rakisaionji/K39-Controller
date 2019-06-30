@@ -7,7 +7,7 @@ namespace K39C
 {
     public partial class Manipulator
     {
-        private const uint PAGE_EXECUTE_READWRITE = 0x40;
+        // private const uint PAGE_EXECUTE_READWRITE = 0x40;
 
         private const long RESOLUTION_WIDTH_ADDRESS = 0x0000000140EDA8BC;
         private const long RESOLUTION_HEIGHT_ADDRESS = 0x0000000140EDA8C0;
@@ -352,12 +352,12 @@ namespace K39C
             if (!IsAttached || address <= 0)
                 return;
 
-            uint oldProtect, bck;
+            // uint oldProtect, bck;
             int bytesWritten = 0;
 
-            VirtualProtect((IntPtr)address, value.Length, PAGE_EXECUTE_READWRITE, out oldProtect);
+            // VirtualProtect((IntPtr)address, value.Length, PAGE_EXECUTE_READWRITE, out oldProtect);
             WriteProcessMemory(ProcessHandle, address, value, value.Length, ref bytesWritten);
-            VirtualProtect((IntPtr)address, value.Length, oldProtect, out bck);
+            // VirtualProtect((IntPtr)address, value.Length, oldProtect, out bck);
         }
 
         public void WriteByte(long address, byte value)
@@ -514,11 +514,11 @@ namespace K39C
             if (!IsAttached || address <= 0)
                 return;
 
-            uint oldProtect, bck;
+            // uint oldProtect, bck;
 
-            VirtualProtect((IntPtr)address, length, PAGE_EXECUTE_READWRITE, out oldProtect);
+            // VirtualProtect((IntPtr)address, length, PAGE_EXECUTE_READWRITE, out oldProtect);
             Write(address, Assembly.GetNopInstructions(length));
-            VirtualProtect((IntPtr)address, length, oldProtect, out bck);
+            // VirtualProtect((IntPtr)address, length, oldProtect, out bck);
         }
 
         public void SetMainWindowActive()

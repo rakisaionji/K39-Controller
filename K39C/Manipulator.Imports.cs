@@ -44,8 +44,8 @@ namespace K39C
         [DllImport(USER32_DLL)]
         static extern bool ScreenToClient(IntPtr hWnd, out POINT lpPoint);
 
-        [DllImport(KERNEL32_DLL)]
-        public static extern bool VirtualProtect(IntPtr lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
+        // [DllImport(KERNEL32_DLL)]
+        // public static extern bool VirtualProtect(IntPtr lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
 
         [DllImport(KERNEL32_DLL)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
