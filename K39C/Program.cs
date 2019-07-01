@@ -187,6 +187,8 @@ namespace K39C
             LoadSettings();
 #if DEBUG
             args = new string[] { "-t", "-s", "-p", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
+            Settings.DivaPatches.GlutCursor = GlutCursor.RIGHT_ARROW;
+            Settings.DivaPatches.FreePlay = true;
 #endif
             SaveSettings(args);
 
@@ -213,13 +215,11 @@ namespace K39C
 
             foreach (var plugin in Settings.DivaPlugins)
             {
-                if (!File.Exists(PLUGIN_LOADER_NAME)) break;
                 var file = Assembly.GetSaveDataPath(String.Format("{0}.dll", plugin));
-                if (File.Exists(file))
-                {
-                    Process.Start(PLUGIN_LOADER_NAME, String.Format("\"{0}\"", file));
+                if (File.Exists(file) && Manipulator.InjectDll(file))
                     Console.WriteLine(String.Format("    {0} : OK", GetPluginLabel(plugin)));
-                }
+                else
+                    Console.WriteLine(String.Format("    {0} : NG", GetPluginLabel(plugin)));
             }
 
             Thread.Sleep(1000);

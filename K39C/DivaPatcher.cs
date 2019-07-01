@@ -82,12 +82,10 @@ namespace K39C
             switch (Settings.System.ErrorDisplay)
             {
                 case ErrorDisplay.SKIP_CARD:
-                    Manipulator.WritePatchNop(0x00000001403BA7E7, 8);
-                    Manipulator.WritePatch(0x00000001403BA7EF, new byte[] { 0xEB });
+                    Manipulator.WritePatch(0x00000001403BA7E7, new byte[] { 0xEB, 0x46 });
                     break;
                 case ErrorDisplay.HIDDEN:
                     Manipulator.WritePatch(0x00000001403BA7E7, new byte[] { 0xE9, 0x3C, 0x03, 0x00, 0x00 });
-                    Manipulator.WritePatchNop(0x00000001403BA7EC, 5);
                     break;
                 case ErrorDisplay.DEFAULT:
                     break;

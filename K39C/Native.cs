@@ -187,4 +187,34 @@ namespace K39C
         NONE = 101,
         FULL_CROSSHAIR = 102,
     }
+
+    [Flags]
+    public enum AllocType
+    {
+        Commit = 0x1000,
+        Reserve = 0x2000,
+        Decommit = 0x4000,
+        Release = 0x8000,
+        Reset = 0x80000,
+        Physical = 0x400000,
+        TopDown = 0x100000,
+        WriteWatch = 0x200000,
+        LargePages = 0x20000000
+    }
+
+    [Flags]
+    public enum MemoryProtection
+    {
+        Execute = 0x10,
+        ExecuteRead = 0x20,
+        ExecuteReadWrite = 0x40,
+        ExecuteWriteCopy = 0x80,
+        NoAccess = 0x1,
+        ReadOnly = 0x2,
+        ReadWrite = 0x4,
+        WriteCopy = 0x8,
+        GuardModifierFlag = 0x200,
+        NoCacheModifierFlag = 0x200,
+        WriteCombineModifierFlag = 0x400
+    }
 }

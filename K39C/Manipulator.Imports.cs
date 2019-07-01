@@ -29,17 +29,17 @@ namespace K39C
         [DllImport(KERNEL32_DLL)]
         public static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
 
-        [DllImport(KERNEL32_DLL)]
+        [DllImport(KERNEL32_DLL, SetLastError = true)]
         public static extern uint SuspendThread(IntPtr hThread);
 
-        [DllImport(KERNEL32_DLL)]
+        [DllImport(KERNEL32_DLL, SetLastError = true)]
         public static extern int ResumeThread(IntPtr hThread);
 
         [DllImport(KERNEL32_DLL, SetLastError = true)]
-        public static extern bool ReadProcessMemory(IntPtr hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
+        public static extern bool ReadProcessMemory(IntPtr hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, out int lpNumberOfBytesRead);
 
         [DllImport(KERNEL32_DLL, SetLastError = true)]
-        public static extern bool WriteProcessMemory(IntPtr hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesWritten);
+        public static extern bool WriteProcessMemory(IntPtr hProcess, long lpBaseAddress, byte[] lpBuffer, int dwSize, out int lpNumberOfBytesWritten);
 
         [DllImport(USER32_DLL)]
         static extern bool ScreenToClient(IntPtr hWnd, out POINT lpPoint);
@@ -64,5 +64,17 @@ namespace K39C
 
         [DllImport(KERNEL32_DLL)]
         public static extern bool CreateProcess(string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, CreateProcessFlags dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+        [DllImport(KERNEL32_DLL, SetLastError = true, ExactSpelling = true)]
+        public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, AllocType flAllocType, MemoryProtection flProtect);
+
+        [DllImport(KERNEL32_DLL, CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+        [DllImport(KERNEL32_DLL, CharSet = CharSet.Auto)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport(KERNEL32_DLL)]
+        public static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out IntPtr lpThreadId);
     }
 }
