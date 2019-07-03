@@ -194,7 +194,7 @@ namespace K39C
         public ushort ReadUInt16(long address)
         {
             if (!IsAttached || address <= 0) return ushort.MaxValue;
-            byte[] buffer = new byte[sizeof(short)];
+            byte[] buffer = new byte[sizeof(ushort)];
             ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, out int bytesRead);
             return BitConverter.ToUInt16(buffer, 0);
         }
@@ -202,7 +202,7 @@ namespace K39C
         public uint ReadUInt32(long address)
         {
             if (!IsAttached || address <= 0) return uint.MaxValue;
-            byte[] buffer = new byte[sizeof(int)];
+            byte[] buffer = new byte[sizeof(uint)];
             ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, out int bytesRead);
             return BitConverter.ToUInt32(buffer, 0);
         }
@@ -210,7 +210,7 @@ namespace K39C
         public ulong ReadUInt64(long address)
         {
             if (!IsAttached || address <= 0) return ulong.MaxValue;
-            byte[] buffer = new byte[sizeof(long)];
+            byte[] buffer = new byte[sizeof(ulong)];
             ReadProcessMemory(ProcessHandle, address, buffer, buffer.Length, out int bytesRead);
             return BitConverter.ToUInt64(buffer, 0);
         }

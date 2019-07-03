@@ -22,6 +22,8 @@ namespace K39C
         [XmlElement] public uint PlayDataId { get; set; } = 0;
         [XmlElement] public bool SetPlayData { get; set; } = false;
         [XmlElement] public ClearBorder ClearBorder { get; set; } = new ClearBorder();
+        [XmlElement] public bool OptionDisp { get; set; } = true;
+        [XmlElement] public bool KeepOption { get; set; } = false;
     }
 
     public class ClearBorder

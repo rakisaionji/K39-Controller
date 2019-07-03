@@ -17,4 +17,6 @@
   <PlayDataId>0</PlayDataId>
   <SetPlayData>false</SetPlayData>
   <ClearBorder great="1" excellent="1" rival="0" />
+  <OptionDisp>true</OptionDisp>
+  <KeepOption>false</KeepOption>
 </PlayerData>

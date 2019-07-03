@@ -167,9 +167,21 @@ namespace K39C
             // Allow player to select the module and extra items (by vladkorotnev)
             for (long i = 0; i < 128; i++) Manipulator.WriteByte(MODULE_TABLE_START + i, 0xFF);
             for (long i = 0; i < 128; i++) Manipulator.WriteByte(ITEM_TABLE_START + i, 0xFF);
-            // Display interim rank and rhythm options (despite it is not yet fully functional)
+            // Display interim rank and rhythm options
             Manipulator.WriteByte(PLAYER_RANK_DISP_ADDRESS, 1);
-            Manipulator.WriteByte(PLAYER_OPTION_DISP_ADDRESS, 1);
+            // Discovered by vladkorotnev, improved by rakisaionji
+            if (playerData.OptionDisp)
+            {
+                Manipulator.WriteByte(PLAYER_OPTION_DISP_ADDRESS, 1);
+                Manipulator.WritePatchNop(0x1405CA0F5, 2); // Allow it to be displayed
+                Manipulator.WritePatchNop(0x1405CB1B3, 13); // Allow it to be set and used
+                if (playerData.KeepOption)
+                {
+                    // It was reset when changing level or song, annoying so prevent it
+                    Manipulator.WritePatchNop(0x1405C84EE, 6); // Prevent it to be reset
+                    Manipulator.WritePatchNop(0x1405C84F9, 3); // Prevent it to be reset
+                }
+            }
             // Display clear borders on the progress bar (by vladkorotnev)
             Manipulator.WriteByte(PLAYER_CLEAR_BORDER_ADDRESS, playerData.ClearBorder.ToByte());
             // First write of play start id, only once per starup
