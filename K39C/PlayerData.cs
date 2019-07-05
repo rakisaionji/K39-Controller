@@ -13,6 +13,10 @@ namespace K39C
         [XmlElement] public int PlateEff { get; set; } = -1;
         [XmlElement] public int VocaloidPoint { get; set; } = 0;
         [XmlElement] public int SkinEquip { get; set; } = 0;
+        [XmlElement] public int BtnSeEquip { get; set; } = 0;
+        [XmlElement] public int SlideSeEquip { get; set; } = 0;
+        [XmlElement] public int ChainSeEquip { get; set; } = 0;
+        [XmlElement] public int TouchSeEquip { get; set; } = 0;
         [XmlElement] public byte ActToggle { get; set; } = 1;
         [XmlElement] public int ActVol { get; set; } = 100;
         [XmlElement] public int ActSlideVol { get; set; } = 100;

@@ -28,7 +28,16 @@ namespace K39C
         private const long PLAYER_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x0E0L;
         private const long PLAYER_LEVEL_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x100L;
         private const long PLAYER_LEVEL_ADDRESS = PLAYER_DATA_ADDRESS + 0x120L;
-        private const long PLAYER_SKIN_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x548L;
+        private const long PLAYER_SKIN_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x54CL; // skin_equip_cmn
+        private const long PLAYER_SKIN_USEPV_ADDRESS = PLAYER_DATA_ADDRESS + 0x550L; // use_pv_skin_equip
+        private const long PLAYER_BTSE_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x558L; // btn_se_equip_cmn
+        private const long PLAYER_BTSE_USEPV_ADDRESS = PLAYER_DATA_ADDRESS + 0x55CL; // se_pv_btn_se_equip
+        private const long PLAYER_SLSE_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x564L; // slide_se_equip_cmn
+        private const long PLAYER_SLSE_USEPV_ADDRESS = PLAYER_DATA_ADDRESS + 0x568L; // use_pv_slide_se_equip
+        private const long PLAYER_CSSE_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x570L; // chainslide_se_equip_cmn
+        private const long PLAYER_CSSE_USEPV_ADDRESS = PLAYER_DATA_ADDRESS + 0x574L; // use_pv_chainslide_se_equip
+        private const long PLAYER_STSE_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x57CL; // slidertouch_se_equip_cmn
+        private const long PLAYER_STSE_USEPV_ADDRESS = PLAYER_DATA_ADDRESS + 0x580L; // use_pv_slidertouch_se_equip
         private const long PLAYER_PLATE_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x124L;
         private const long PLAYER_PLATE_EFF_ADDRESS = PLAYER_DATA_ADDRESS + 0x128L;
         private const long PLAYER_VP_ADDRESS = PLAYER_DATA_ADDRESS + 0x12CL;
@@ -106,17 +115,41 @@ namespace K39C
         {
             Manipulator.Write(PlayerNameAddress, PlayerNameValue);
             Manipulator.Write(LevelNameAddress, LevelNameValue);
-            Manipulator.WriteInt32(PLAYER_SKIN_EQUIP_ADDRESS, playerData.SkinEquip);
             Manipulator.WriteInt32(PLAYER_LEVEL_ADDRESS, playerData.Level);
             Manipulator.WriteInt32(PLAYER_PLATE_ID_ADDRESS, playerData.PlateId);
             Manipulator.WriteInt32(PLAYER_PLATE_EFF_ADDRESS, playerData.PlateEff);
             Manipulator.WriteInt32(PLAYER_VP_ADDRESS, playerData.VocaloidPoint);
+            Manipulator.WriteInt32(PLAYER_PWD_STAT_ADDRESS, playerData.PasswordStatus);
+            Manipulator.WriteInt32(PLAYER_PV_SORT_KIND_ADDRESS, playerData.PvSortKind);
+            if (playerData.SkinEquip > 0)
+            {
+                Manipulator.WriteInt32(PLAYER_SKIN_EQUIP_ADDRESS, playerData.SkinEquip);
+                Manipulator.WriteInt32(PLAYER_SKIN_USEPV_ADDRESS, 1);
+            }
+            if (playerData.BtnSeEquip > 0)
+            {
+                Manipulator.WriteInt32(PLAYER_BTSE_EQUIP_ADDRESS, playerData.BtnSeEquip);
+                Manipulator.WriteInt32(PLAYER_BTSE_USEPV_ADDRESS, 1);
+            }
+            if (playerData.SlideSeEquip > 0)
+            {
+                Manipulator.WriteInt32(PLAYER_SLSE_EQUIP_ADDRESS, playerData.SlideSeEquip);
+                Manipulator.WriteInt32(PLAYER_SLSE_USEPV_ADDRESS, 1);
+            }
+            if (playerData.ChainSeEquip > 0)
+            {
+                Manipulator.WriteInt32(PLAYER_CSSE_EQUIP_ADDRESS, playerData.ChainSeEquip);
+                Manipulator.WriteInt32(PLAYER_CSSE_USEPV_ADDRESS, 1);
+            }
+            if (playerData.TouchSeEquip > 0)
+            {
+                Manipulator.WriteInt32(PLAYER_STSE_EQUIP_ADDRESS, playerData.TouchSeEquip);
+                Manipulator.WriteInt32(PLAYER_STSE_USEPV_ADDRESS, 1);
+            }
             Manipulator.WriteByte(PLAYER_ACT_TOGGLE_ADDRESS, playerData.ActToggle);
             Manipulator.WriteInt32(PLAYER_ACT_VOL_ADDRESS, playerData.ActVol);
             Manipulator.WriteInt32(PLAYER_ACT_SLVOL_ADDRESS, playerData.ActSlideVol);
             Manipulator.WriteInt32(PLAYER_HP_VOL_ADDRESS, playerData.HpVol);
-            Manipulator.WriteInt32(PLAYER_PWD_STAT_ADDRESS, playerData.PasswordStatus);
-            Manipulator.WriteInt32(PLAYER_PV_SORT_KIND_ADDRESS, playerData.PvSortKind);
             if (playerData.SetPlayData)
             {
                 Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayDataId);

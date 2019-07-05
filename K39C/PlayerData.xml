@@ -8,6 +8,10 @@
   <PlateEff>-1</PlateEff>
   <VocaloidPoint>2</VocaloidPoint>
   <SkinEquip>0</SkinEquip>
+  <BtnSeEquip>0</BtnSeEquip>
+  <SlideSeEquip>0</SlideSeEquip>
+  <ChainSeEquip>0</ChainSeEquip>
+  <TouchSeEquip>0</TouchSeEquip>
   <ActToggle>1</ActToggle>
   <ActVol>100</ActVol>
   <ActSlideVol>100</ActSlideVol>
