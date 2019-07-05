@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("K39C-Pico")]
-[assembly: AssemblyCopyright("Copyright © 2019")]
+[assembly: AssemblyCopyright("Copyright © 2019 Raki Saionji")]
 [assembly: AssemblyTrademark("K39C-Pico")]
 [assembly: AssemblyCulture("")]
 

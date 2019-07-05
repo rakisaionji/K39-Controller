@@ -88,9 +88,6 @@ namespace K39C
             // Fix annoying behavior of closing after changing module or item  (by vladkorotnev)
             Manipulator.WritePatch(MODSELECTOR_CLOSE_AFTER_MODULE, new byte[] { 0x85 }); // je --> jne
             Manipulator.WritePatch(MODSELECTOR_CLOSE_AFTER_CUSTOMIZE, new byte[] { 0x85 }); // je --> jne
-            // Enable module selection without card (by lybxlpsv) [ WIP / NG ]
-            // Manipulator.WritePatch(0x00000001405C5133, new byte[] { 0x74 });
-            // Manipulator.WritePatch(0x00000001405BC8E7, new byte[] { 0x74 });
         }
 
         private void ReadPlayerData()
@@ -205,16 +202,28 @@ namespace K39C
             // Discovered by vladkorotnev, improved by rakisaionji
             if (playerData.OptionDisp)
             {
+                // Allow to use without use_card (by somewhatlurker)
+                if (!playerData.UseCard)
+                {
+                    Manipulator.WritePatchNop(0x00000001405CB14A, 6);
+                    Manipulator.WritePatchNop(0x0000000140136CFA, 6);
+                }
                 Manipulator.WriteByte(PLAYER_OPTION_DISP_ADDRESS, 1);
-                Manipulator.WritePatchNop(0x1405CA0F5, 2); // Allow it to be displayed
-                Manipulator.WritePatchNop(0x1405CB1B3, 13); // Allow it to be set and used
+                Manipulator.WritePatchNop(0x00000001405CA0F5, 2); // Allow it to be displayed
+                Manipulator.WritePatchNop(0x00000001405CB1B3, 13); // Allow it to be set and used
                 if (playerData.KeepOption)
                 {
                     // It was reset when changing level or song, annoying so prevent it
-                    Manipulator.WritePatchNop(0x1405C84EE, 6); // Prevent it to be reset
-                    Manipulator.WritePatchNop(0x1405C84F9, 3); // Prevent it to be reset
+                    Manipulator.WritePatchNop(0x00000001405C84EE, 6); // Prevent it to be reset
+                    Manipulator.WritePatchNop(0x00000001405C84F9, 3); // Prevent it to be reset
                 }
             }
+            // Enable module selection without card (by lybxlpsv and crash5band) [WIP / NG]
+            // if (!playerData.UseCard)
+            // {
+            //     Manipulator.WritePatch(0x00000001405C513B, new byte[] { 0x01 });
+            //     Manipulator.WritePatch(0x000000014010523F, new byte[] { 0x30, 0xC0, 0x90 });
+            // }
             // Display clear borders on the progress bar (by vladkorotnev)
             Manipulator.WriteByte(PLAYER_CLEAR_BORDER_ADDRESS, playerData.ClearBorder.ToByte());
             // First write of play start id, only once per starup

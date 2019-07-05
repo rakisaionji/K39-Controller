@@ -16,7 +16,7 @@ namespace K39C
         private static readonly string K39C_RELDATE = "2019-07-07";
         private static readonly string APP_SETTING_PATH = Assembly.GetSaveDataPath("Settings.xml");
         private static readonly string DIVA_PROCESS_NAME = "diva";
-        private static readonly string PLUGIN_LOADER_NAME = Assembly.GetSaveDataPath("DllInjector.exe");
+        // private static readonly string PLUGIN_LOADER_NAME = Assembly.GetSaveDataPath("DllInjector.exe");
 
         private static Manipulator Manipulator = new Manipulator();
 
@@ -43,8 +43,8 @@ namespace K39C
 #endif
             Console.WriteLine("            PDAFT 7.10.00 Loader for S39 and K39            ");
             Console.WriteLine("------------------------------------------------------------");
-            Console.WriteLine("   Minimal and less intrusive controller for real cabinet   ");
-            Console.WriteLine("     by rakisaionji, vladkorotnev, samyuu and lybxlpsv      ");
+            Console.WriteLine("            by rakisaionji, vladkorotnev, samyuu            ");
+            Console.WriteLine("                 lybxlpsv and somewhatlurker                ");
             Console.WriteLine("------------------------------------------------------------");
             Console.WriteLine(" > Codename : K39-PICO ");
             Console.WriteLine(" > Date     : {0} ", K39C_RELDATE);
