@@ -48,8 +48,11 @@ namespace K39C
             foreach (var patch in patches)
                 Manipulator.WritePatch(patch.Key, patch.Value);
             if (Settings.DivaPatches.FreePlay)
+            {
                 // Always return true for the SelCredit enter SelPv check
                 Manipulator.WritePatch(0x0000000140393610, new byte[] { 0xB0, 0x01, 0xC3, 0x90, 0x90, 0x90 });
+                Manipulator.WritePatch(0x000000014066E870, new byte[] { 0xEB, 0x0E }); // Thanks vladkorotnev
+            }
             if (Settings.DivaPatches.GlutCursor != GlutCursor.NONE)
                 // Use GLUT_CURSOR_RIGHT_ARROW instead of GLUT_CURSOR_NONE
                 Manipulator.WritePatch(0x000000014019341B, new byte[] { (byte)Settings.DivaPatches.GlutCursor });
@@ -83,6 +86,7 @@ namespace K39C
             {
                 case ErrorDisplay.SKIP_CARD:
                     Manipulator.WritePatch(0x00000001403BA7E7, new byte[] { 0xEB, 0x46 });
+                    Manipulator.WritePatch(0x00000001403BA909, new byte[] { 0xEB, 0x1F });
                     break;
                 case ErrorDisplay.HIDDEN:
                     Manipulator.WritePatch(0x00000001403BA7E7, new byte[] { 0xE9, 0x3C, 0x03, 0x00, 0x00 });

@@ -156,7 +156,6 @@ namespace K39C
 
         private void SavePlayerData()
         {
-            // Manipulator.WriteInt32(GetPlayerNameFAddress(), 0x10);
             playerData.VocaloidPoint = Manipulator.ReadInt32(PLAYER_VP_ADDRESS);
             playerData.ActToggle = Manipulator.ReadByte(PLAYER_ACT_TOGGLE_ADDRESS);
             playerData.ActVol = Manipulator.ReadInt32(PLAYER_ACT_VOL_ADDRESS); ;

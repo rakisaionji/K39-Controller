@@ -1,0 +1,20 @@
+[ v2.30 / 2019-07-07 ]
++ Fix bug regarding random crash with Level Name
++ Added Error Display settings to hide errors on Advertise screen
++ Added some interesting sprite features by @somewhatlurker
++ Enable the use of Rhythm Game Options for all songs
++ Player can choose Skin and Sound Effects by preference
++ Plugins can now be loaded without DllInjector.exe
+
+[ v2.20 / 2019-06-28 ]
++ It is now being able to act as a loader
++ Add DLL Injector with Fast Loader
++ Add Level Name feature by @vladkorotnev
++ Add Anti Alias settings by @lybxlpsv
+
+[ v2.10 / 2019-06-18 ]
++ Touch Emulator for third party and non touch screens
++ Scale Component for unconventional and ultra wide displays
++ Player Data Manager for module changing and to keep settings
++ Sys Timer to freeze the timer in PV and Module select screens
++ Ability to display fake Keychip Id and Main Id information
