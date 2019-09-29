@@ -26,7 +26,8 @@ namespace K39C
         private const long SONG_CLEAR_COUNTS_ADDRESS = 0x00000001411A95E8L;
 
         private readonly string HI_SCORE_PATH = Assembly.GetSaveDataPath("PlayerScore.dat");
-        private readonly string SCORE_LOG_PATH = Assembly.GetSaveDataPath(String.Format("ScoreData_{0:yyyyMMdd}.dat", DateTime.UtcNow));
+        private readonly string SCORE_LOG_PATH = Assembly.GetSaveDataPath(String.Format("ScoreData\\ScoreData_{0:yyyyMMdd}.dat", DateTime.UtcNow));
+        private readonly string SCORE_DATA_PATH = Assembly.GetSaveDataPath("ScoreData");
 
         public DivaScore(Manipulator manipulator)
         {
@@ -37,6 +38,7 @@ namespace K39C
                 Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5d0, scoreArray + i * 1000 * 2 * 0xE4);
                 Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5d8, scoreArray + (i + 1) * 1000 * 2 * 0xE4);
             }
+            if (!Directory.Exists(SCORE_DATA_PATH)) Directory.CreateDirectory(SCORE_DATA_PATH);
             ReadScoreData();
             UpdateScoreCache();
             UpdateClearCounts();
