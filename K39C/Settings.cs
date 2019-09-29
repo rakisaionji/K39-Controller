@@ -53,6 +53,8 @@ namespace K39C
         public class DivaPatch
         {
             [XmlElement] public GlutCursor GlutCursor { get; set; } = GlutCursor.NONE;
+            [XmlElement] public bool RamPathFix { get; set; } = false;
+            [XmlElement] public bool MdataPathFix { get; set; } = false;
             [XmlElement] public bool FreePlay { get; set; } = false;
             [XmlElement] public bool HideCredits { get; set; } = false;
 

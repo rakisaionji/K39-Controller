@@ -186,6 +186,8 @@ namespace K39C
             args = new string[] { "-t", "-s", "-p", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
             Settings.DivaPatches.GlutCursor = GlutCursor.RIGHT_ARROW;
             Settings.DivaPatches.FreePlay = true;
+            Settings.DivaPatches.RamPathFix = true;
+            Settings.DivaPatches.MdataPathFix = true;
 #endif
             SaveSettings(args);
 

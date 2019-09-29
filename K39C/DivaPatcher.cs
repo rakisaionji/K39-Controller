@@ -24,8 +24,6 @@ namespace K39C
                 { 0x0000000140501515, new byte [] { 0x90, 0x90 } },
                 // Don't update the touch slider state so we can write our own
                 // { 0x000000014061579B, new byte [] { 0x90, 0x90, 0x90, 0x8B, 0x42, 0xE0, 0x90, 0x90, 0x90 } },
-                // Write ram files to the current directory instead of Y:/SBZV/ram
-                { 0x000000014066CF09, new byte [] { 0xE9, 0xD8, 0x00 } },
                 // *But of course we have a valid keychip*, return true
                 { 0x000000014066E820, new byte [] { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3 } },
                 // Skip parts of the network check state
@@ -47,6 +45,9 @@ namespace K39C
         {
             foreach (var patch in patches)
                 Manipulator.WritePatch(patch.Key, patch.Value);
+            if (Settings.DivaPatches.RamPathFix)
+                // Write ram files to the current directory instead of Y:/SBZV/ram
+                Manipulator.WritePatch(0x000000014066CF09, new byte[] { 0xE9, 0xD8, 0x00 });
             if (Settings.DivaPatches.FreePlay)
             {
                 // Always return true for the SelCredit enter SelPv check
@@ -73,10 +74,13 @@ namespace K39C
             // Hide Data Loading text when use_card = 1 by rakisaionji
             Manipulator.WritePatch(0x00000001405BA42D, new byte[] { 0xF7 });
             Manipulator.WritePatch(0x00000001405BB95C, new byte[] { 0x6F });
-            // Change mdata path from "C:/Mount/Option" to "mdata", revised by rakisaionji
-            Manipulator.WritePatch(0x000000014066CE9C, new byte[] { 0x05 }); // Size
-            Manipulator.WritePatch(0x000000014066CEA3, new byte[] { 0xF1, 0x1D, 0x39 });
-            Manipulator.WritePatch(0x000000014066CEAE, new byte[] { 0x05 }); // Size
+            if (Settings.DivaPatches.MdataPathFix)
+            {
+                // Change mdata path from "C:/Mount/Option" to "mdata", revised by rakisaionji
+                Manipulator.WritePatch(0x000000014066CE9C, new byte[] { 0x05 }); // Size
+                Manipulator.WritePatch(0x000000014066CEA3, new byte[] { 0xF1, 0x1D, 0x39 });
+                Manipulator.WritePatch(0x000000014066CEAE, new byte[] { 0x05 }); // Size
+            }
             // Touch effect is annoying without Scale Component in other resolutions
             // It's not cool, just yeet it for fuck's sake, by rakisaionji
             if (Settings.Executable.IsCustomRes() && !Settings.Components.ScaleComponent)

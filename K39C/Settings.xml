@@ -21,6 +21,8 @@
   </Components>
   <DivaPatches>
     <GlutCursor>NONE</GlutCursor>
+    <RamPathFix>false</RamPathFix>
+    <MdataPathFix>false</MdataPathFix>
     <FreePlay>false</FreePlay>
     <HideCredits>false</HideCredits>
     <HidePvUi>false</HidePvUi>
