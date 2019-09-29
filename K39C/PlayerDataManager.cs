@@ -11,6 +11,7 @@ namespace K39C
         Manipulator Manipulator;
         private Thread thread;
         private bool stopFlag;
+        private DivaScore divaScore;
         // private int consoleY;
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -172,6 +173,7 @@ namespace K39C
             }
             // First write of play start id, only once per session
             if (playerData.SetPlayData) Manipulator.WriteUInt32(PLAYER_START_ID_ADDRESS, playerData.PlayDataId);
+            if (divaScore != null) divaScore.SaveScoreData();
         }
 
         public void Initialize()
@@ -261,6 +263,7 @@ namespace K39C
                     step = 2;
                     break;
                 case SubGameState.SUB_STAGE_RESULT: // 15
+                    if (step == 2 && divaScore != null) { divaScore.GetScoreResults(); }
                     step = 3;
                     break;
                 default:
@@ -273,6 +276,7 @@ namespace K39C
             if (thread != null) return;
             stopFlag = false;
             Initialize();
+            divaScore = new DivaScore(Manipulator);
             thread = new Thread(new ThreadStart(ThreadCallback));
             thread.Start();
             // consoleY = Console.CursorTop;

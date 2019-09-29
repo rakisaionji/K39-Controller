@@ -44,6 +44,7 @@
     <Compile Include="Assembly.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="DivaPatcher.cs" />
+    <Compile Include="DivaScore.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Manipulator.cs" />
     <Compile Include="Manipulator.Imports.cs" />

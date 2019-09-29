@@ -234,10 +234,19 @@ namespace K39C
         public string ReadAsciiString(long address)
         {
             if (!IsAttached || address <= 0) return string.Empty;
-            int length = GetAsciiStringLength(address);
+            int length = GetStringLength(address);
             byte[] buffer = new byte[length];
             ReadProcessMemory(ProcessHandle, address, buffer, length, out int bytesRead);
             return Encoding.ASCII.GetString(buffer);
+        }
+
+        public string ReadUtf8String(long address)
+        {
+            if (!IsAttached || address <= 0) return string.Empty;
+            int length = GetStringLength(address);
+            byte[] buffer = new byte[length];
+            ReadProcessMemory(ProcessHandle, address, buffer, length, out int bytesRead);
+            return Encoding.UTF8.GetString(buffer);
         }
 
         public void Write(long address, byte[] value)
@@ -331,7 +340,7 @@ namespace K39C
             Write(address, buffer);
         }
 
-        public int GetAsciiStringLength(long address)
+        public int GetStringLength(long address)
         {
             int length = 0;
             for (int i = 0; i < Byte.MaxValue; i++)
@@ -377,6 +386,23 @@ namespace K39C
             if (threadRslt.ToInt32() == 0) return false;
 
             return true;
+        }
+
+        public IntPtr AllocateMemory(int length)
+        {
+            if (!IsAttached) return IntPtr.Zero;
+            return VirtualAllocEx(ProcessHandle, IntPtr.Zero, new IntPtr(length), AllocType.Commit | AllocType.Reserve, MemoryProtection.ReadWrite);
+        }
+
+        public int[] ReadInt32Array(long address, int length)
+        {
+            if (!IsAttached || address <= 0) return null;
+            var ret = new int[length];
+            for (int i = 0; i < length; i++)
+            {
+                ret[i] = ReadInt32(address + i * 4);
+            }
+            return ret;
         }
     }
 }
