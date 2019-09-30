@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -33,6 +35,8 @@ namespace K39C
         private const int SEL_PV_FREEZE_TIME = 39;
         private const int SYS_TIMER_TIME = SEL_PV_FREEZE_TIME * SYS_TIME_FACTOR;
         // private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
+
+        private readonly string ANNOUNCE_PATH = Assembly.GetSaveDataPath("BannerData.txt");
 
         public Watchdog(Manipulator manipulator, Settings settings)
         {
@@ -105,11 +109,55 @@ namespace K39C
             }
         }
 
+        private string Announcement
+        {
+            get
+            {
+                var txtAddr = Manipulator.ReadInt64(0x140CD9E00);
+                if (txtAddr == 0) return String.Empty;
+                return Manipulator.ReadUtf8String(txtAddr);
+            }
+            set
+            {
+                if (String.IsNullOrEmpty(value)) return;
+                var txtUtf8 = Encoding.UTF8.GetBytes(value);
+                var txtAddr = Manipulator.AllocateMemory(txtUtf8.Length).ToInt64();
+                Manipulator.Write(txtAddr, txtUtf8);
+                Manipulator.WriteInt64(0x140CD9E00, txtAddr);
+                // Force display annoucement, thanks vladkorotnev
+                Manipulator.WriteByte(0x140CD9E18, 0x1F);
+                Manipulator.WriteByte(0x140CD9E10, 0x1);
+            }
+        }
+
+        private void Announce()
+        {
+            if (File.Exists(ANNOUNCE_PATH))
+            {
+                Announcement = File.ReadAllText(ANNOUNCE_PATH).Trim();
+            }
+            else
+            {
+                var sb = new StringBuilder();
+                sb.Append("PDAFT Loader for S39 and K39 by Team Shimapan");
+                sb.AppendFormat(" - Codename : {0}", Program.K39C_CODEVER);
+                sb.AppendFormat(" - Version : {0}", Program.K39C_VERSION);
+                sb.AppendFormat(" - Date : {0}", Program.K39C_RELDATE);
+                sb.Append(" - Thank you for your support!");
+                Announcement = sb.ToString();
+            }
+        }
+
         public void Start()
         {
             if (Settings.System.SysTimer) SysTimer_Start();
             KeychipId = Settings.System.KeychipId.Trim();
             MainId = Settings.System.MainId.Trim();
+
+            // Additional patch for annoucement display, by rakisaionji
+            Manipulator.WritePatchNop(0x000000014001F680, 4);  //  mov  [rax+10h], rdi
+            Manipulator.WritePatchNop(0x000000014001F68E, 3);  //  mov  [rcx], dil
+            new Thread(new ThreadStart(Announce)).Start();
 
             if (thread != null) return;
             stopFlag = false;

@@ -11,11 +11,12 @@ namespace K39C
 {
     class Program
     {
-        private static readonly string K39C_VERSION = "2.30.01";
-        private static readonly string K39C_RELDATE = "2019-07-09";
+        internal static readonly string K39C_CODEVER = "K39-PICO";
+        internal static readonly string K39C_VERSION = "7.10.41";
+        internal static readonly string K39C_RELDATE = "2019-10-01";
+
         private static readonly string APP_SETTING_PATH = Assembly.GetSaveDataPath("Settings.xml");
         private static readonly string DIVA_PROCESS_NAME = "diva";
-        // private static readonly string PLUGIN_LOADER_NAME = Assembly.GetSaveDataPath("DllInjector.exe");
 
         private static Manipulator Manipulator = new Manipulator();
 
@@ -40,10 +41,10 @@ namespace K39C
 #if DEBUG
             Console.WriteLine("              ---- >>>> DEBUG_BUILD <<<< ----               ");
 #endif
-            Console.WriteLine("            PDAFT 7.10.00 Loader for S39 and K39            ");
+            Console.WriteLine("                PDAFT Loader for S39 and K39                ");
             Console.WriteLine("                      by Team Shimapan                      ");
             Console.WriteLine("------------------------------------------------------------");
-            Console.WriteLine(" > Codename : K39-PICO ");
+            Console.WriteLine(" > Codename : {0} ", K39C_CODEVER);
             Console.WriteLine(" > Date     : {0} ", K39C_RELDATE);
             Console.WriteLine(" > Version  : {0} ", K39C_VERSION);
             Console.WriteLine("------------------------------------------------------------");
