@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 using System.Xml.Serialization;
 
 namespace K39C
@@ -11,6 +12,7 @@ namespace K39C
         private Manipulator Manipulator;
         private PlayerScore playerScore;
         private ScoreHistory scoreHistory;
+        private bool isInitialized;
         private long scoreArray;
 
         private const long PLAYER_DATA_ADDRESS = 0x00000001411A8850L;
@@ -19,6 +21,7 @@ namespace K39C
         private const long PLAYER_LEVEL_ADDRESS = PLAYER_DATA_ADDRESS + 0x120L;
         private const long PLAYER_PLATE_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x124L;
         private const long PLAYER_PLATE_EFF_ADDRESS = PLAYER_DATA_ADDRESS + 0x128L;
+        private const long PLAYER_MODULE_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x1C0L;
 
         private const long RESULTS_BASE_ADDRESS = 0x000000014CC93830L;
         private const long GAME_INFO_ADDRESS = 0x0000000141197E00L;
@@ -31,18 +34,25 @@ namespace K39C
 
         public DivaScore(Manipulator manipulator)
         {
+            isInitialized = false;
             Manipulator = manipulator;
             scoreArray = Manipulator.AllocateMemory(4 * 1000 * 2 * 0xE4).ToInt64();
             for (int i = 0; i < 4; i++)
             {
-                Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5d0, scoreArray + i * 1000 * 2 * 0xE4);
-                Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5d8, scoreArray + (i + 1) * 1000 * 2 * 0xE4);
+                Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5D0, scoreArray + i * 1000 * 2 * 0xE4);
+                Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5D8, scoreArray + (i + 1) * 1000 * 2 * 0xE4);
             }
+            new Thread(new ThreadStart(Initialize)).Start();
+        }
+
+        private void Initialize()
+        {
             if (!Directory.Exists(SCORE_DATA_PATH)) Directory.CreateDirectory(SCORE_DATA_PATH);
             ReadScoreData();
             UpdateScoreCache();
             UpdateClearCounts();
             ReadHistoryData();
+            isInitialized = true;
         }
 
         private void ReadScoreData()
@@ -91,6 +101,7 @@ namespace K39C
 
         internal void SaveScoreData()
         {
+            if (!isInitialized) return;
             var s = new XmlSerializer(typeof(PlayerScore));
             using (var fs = new FileStream(HI_SCORE_PATH, FileMode.Create, FileAccess.Write))
             {
@@ -105,6 +116,7 @@ namespace K39C
 
         internal void SaveHistoryData()
         {
+            if (!isInitialized) return;
             var s = new XmlSerializer(typeof(ScoreHistory));
             using (var fs = new FileStream(SCORE_LOG_PATH, FileMode.Create, FileAccess.Write))
             {
@@ -216,6 +228,7 @@ namespace K39C
 
         internal void GetScoreResults()
         {
+            if (!isInitialized) return;
             var rank = Manipulator.ReadInt32(RESULTS_BASE_ADDRESS + 0xE8);
             var insurance = Manipulator.ReadByte(GAME_INFO_ADDRESS + 0x14);
             if (insurance != 0) return;
@@ -252,6 +265,7 @@ namespace K39C
             var level = Manipulator.ReadInt32(PLAYER_LEVEL_ADDRESS);
             var plateId = Manipulator.ReadInt32(PLAYER_PLATE_ID_ADDRESS);
             var plateEff = Manipulator.ReadInt32(PLAYER_PLATE_EFF_ADDRESS);
+            var moduleEquip = Manipulator.ReadInt32Array(PLAYER_MODULE_EQUIP_ADDRESS, 3);
 
             // ========== Get High Score Record ========== //
 
@@ -311,6 +325,7 @@ namespace K39C
                 SlideScore = slideScore,
                 IsNewScore = isNewScore ? 1 : 0,
                 IsNewPercent = isNewPercent ? 1 : 0,
+                ModuleEquip = moduleEquip,
                 RecordDate = recordDate,
             };
             scoreHistory.Scores.Add(record);
@@ -405,6 +420,7 @@ namespace K39C
         [XmlElement] public int SlideScore { get; set; } = -1;
         [XmlElement] public int IsNewScore { get; set; } = -1;
         [XmlElement] public int IsNewPercent { get; set; } = -1;
+        [XmlElement] public int[] ModuleEquip { get; set; } = null;
         [XmlElement] public DateTime RecordDate { get; set; } = DateTime.UtcNow;
     }
 
