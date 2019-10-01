@@ -332,7 +332,7 @@ namespace K39C
 
             // ========== Update High Score Record ========== //
 
-            if (isNewScore || isNewPercent || isNewRank) playerScore.UpdateScoreEntry(pvId, difficulty, edition, entry);
+            if (isNewScore || isNewPercent || isNewRank) playerScore.UpdateScoreEntry(pvId, difficulty, edition, record);
 
             UpdateSingleScoreCacheEntry(pvId, difficulty, edition);
             UpdateClearCounts();
