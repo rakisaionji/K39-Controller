@@ -140,7 +140,7 @@ namespace K39C
         void UpdateSingleScoreCacheEntry(int pvId, int diff, int ed)
         {
             var entry = playerScore.GetScoreEntry(pvId, diff, ed);
-            if (entry.Score > 0 && entry.Percent > 0)
+            if (entry.Rank > 1 && entry.Score > 0 && entry.Percent > 0)
             {
                 int alltimeScore = entry.AlltimeScore;
                 int alltimePercent = entry.AlltimePercent;
@@ -332,7 +332,7 @@ namespace K39C
 
             // ========== Update High Score Record ========== //
 
-            if (isNewScore || isNewPercent || isNewRank) playerScore.UpdateScoreEntry(pvId, difficulty, edition, record);
+            if (rank > 1 && (isNewScore || isNewPercent || isNewRank)) playerScore.UpdateScoreEntry(pvId, difficulty, edition, record);
 
             UpdateSingleScoreCacheEntry(pvId, difficulty, edition);
             UpdateClearCounts();
