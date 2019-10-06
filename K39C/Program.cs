@@ -189,6 +189,8 @@ namespace K39C
             Settings.DivaPatches.FreePlay = true;
             Settings.DivaPatches.RamPathFix = true;
             Settings.DivaPatches.MdataPathFix = true;
+            Settings.DivaPatches.CardIcon = StatusIcon.OK;
+            Settings.DivaPatches.NetIcon = StatusIcon.OK;
 #endif
             SaveSettings(args);
 

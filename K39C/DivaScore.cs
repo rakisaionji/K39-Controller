@@ -13,6 +13,8 @@ namespace K39C
         private PlayerScore playerScore;
         private PlayerScore rivalScore;
         private ScoreHistory scoreHistory;
+        private PlayerExData playerExData;
+
         private bool isInitialized;
         private long scoreArray;
 
@@ -23,12 +25,15 @@ namespace K39C
         private const long PLAYER_PLATE_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x124L;
         private const long PLAYER_PLATE_EFF_ADDRESS = PLAYER_DATA_ADDRESS + 0x128L;
         private const long PLAYER_MODULE_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x1C0L;
+        private const long PLAYER_CMN_MODULE_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x1D8L;
+        private const long PLAYER_CMN_ITEM_EQUIP_ADDRESS = PLAYER_DATA_ADDRESS + 0x398L;
 
         private const long RESULTS_BASE_ADDRESS = 0x000000014CC93830L;
         private const long GAME_INFO_ADDRESS = 0x0000000141197E00L;
         private const long CURRENT_SONG_NAME_ADDRESS = 0x0000000140D0A578L;
         private const long SONG_CLEAR_COUNTS_ADDRESS = 0x00000001411A95E8L;
 
+        private readonly string PLAYER_EXDATA_PATH = Assembly.GetSaveDataPath("PlayerData.dat");
         private readonly string PLAYER_SCORE_PATH = Assembly.GetSaveDataPath("PlayerScore.dat");
         private readonly string RIVAL_SCORE_PATH = Assembly.GetSaveDataPath("RivalScore.dat");
         private readonly string SCORE_LOG_PATH = Assembly.GetSaveDataPath(String.Format("ScoreData\\ScoreData_{0:yyyyMMdd}.dat", DateTime.UtcNow));
@@ -50,12 +55,37 @@ namespace K39C
         private void Initialize()
         {
             if (!Directory.Exists(SCORE_DATA_PATH)) Directory.CreateDirectory(SCORE_DATA_PATH);
+            ReadPlayerExData();
             ReadPlayerScoreData();
             ReadRivalScoreData();
             UpdateScoreCache();
             UpdateClearCounts();
             ReadScoreHistoryData();
+            Manipulator.WriteInt32Array(PLAYER_CMN_MODULE_EQUIP_ADDRESS, playerExData.ModuleEquip, 6);
+            Manipulator.WriteInt32Array(PLAYER_CMN_ITEM_EQUIP_ADDRESS, playerExData.ModuleEquip, 24);
             isInitialized = true;
+        }
+
+        private void ReadPlayerExData()
+        {
+            try
+            {
+                var s = new XmlSerializer(typeof(PlayerExData));
+                using (var fs = new FileStream(PLAYER_EXDATA_PATH, FileMode.Open, FileAccess.Read))
+                {
+                    using (var gs = new GZipStream(fs, CompressionMode.Decompress))
+                    {
+                        playerExData = (PlayerExData)s.Deserialize(gs);
+                        if (playerExData == null) playerExData = new PlayerExData();
+                        gs.Close();
+                    }
+                    fs.Close();
+                }
+            }
+            catch (Exception)
+            {
+                playerExData = new PlayerExData();
+            }
         }
 
         private void ReadPlayerScoreData()
@@ -123,6 +153,21 @@ namespace K39C
             }
         }
 
+        internal void SavePlayerExData()
+        {
+            if (!isInitialized) return;
+            var s = new XmlSerializer(typeof(PlayerExData));
+            using (var fs = new FileStream(PLAYER_EXDATA_PATH, FileMode.Create, FileAccess.Write))
+            {
+                using (var gs = new GZipStream(fs, CompressionMode.Compress))
+                {
+                    s.Serialize(gs, playerExData);
+                    gs.Close();
+                }
+                fs.Close();
+            }
+        }
+
         internal void SavePlayerScoreData()
         {
             if (!isInitialized) return;
@@ -164,22 +209,23 @@ namespace K39C
         void UpdateSingleScoreCacheEntry(int pvId, int diff, int ed)
         {
             var entry = playerScore.GetScoreEntry(pvId, diff, ed);
-            if (entry.Rank > 1 && entry.Score > 0 && entry.Percent > 0)
+
+            int alltimeScore = entry.AlltimeScore;
+            int alltimePercent = entry.AlltimePercent;
+            int alltimeRank = entry.AlltimeRank;
+            int modifiers = entry.AlltimeModifiers;
+
+            if (alltimeScore == -1) alltimeScore = entry.Score;
+            if (alltimePercent == -1) alltimePercent = entry.Percent;
+            if (alltimeRank == -1) alltimeRank = entry.Rank;
+            if (modifiers == -1) modifiers = entry.Modifiers > 0 ? 1 << (entry.Modifiers - 1) : 0;
+
+            if (alltimeScore > 99999999) alltimeScore = 99999999;
+
+            if (alltimePercent > 0)
             {
-                int alltimeScore = entry.AlltimeScore;
-                int alltimePercent = entry.AlltimePercent;
-                int alltimeRank = entry.AlltimeRank;
-                int modifiers = entry.AlltimeModifiers;
-
-                if (alltimeScore == -1) alltimeScore = entry.Score;
-                if (alltimePercent == -1) alltimePercent = entry.Percent;
-                if (alltimeRank == -1) alltimeRank = entry.Rank;
-                if (modifiers == -1) modifiers = entry.Modifiers > 0 ? 1 << (entry.Modifiers - 1) : 0;
-
-                if (alltimeScore > 99999999) alltimeScore = 99999999;
-
                 var cachedScore = GetCachedScore(pvId, diff, ed);
-                cachedScore.Score = alltimeScore;
+                cachedScore.Score = (alltimeRank > 1) ? alltimeScore : -1;
                 cachedScore.Percent = alltimePercent;
                 cachedScore.Rank = alltimeRank;
 
@@ -193,22 +239,22 @@ namespace K39C
         {
             if (rivalScore == null) return;
             var entry = rivalScore.GetScoreEntry(pvId, diff, ed);
-            if (entry.Rank > 1 && entry.Score > 0 && entry.Percent > 0)
+
+            int alltimeScore = entry.AlltimeScore;
+            int alltimePercent = entry.AlltimePercent;
+            int alltimeRank = entry.AlltimeRank;
+
+            if (alltimeScore == -1) alltimeScore = entry.Score;
+            if (alltimePercent == -1) alltimePercent = entry.Percent;
+            if (alltimeRank == -1) alltimeRank = entry.Rank;
+
+            if (alltimeScore > 99999999) alltimeScore = 99999999;
+
+            if (alltimePercent > 0)
             {
-                int alltimeScore = entry.AlltimeScore;
-                int alltimePercent = entry.AlltimePercent;
-                int alltimeRank = entry.AlltimeRank;
-
-                if (alltimeScore == -1) alltimeScore = entry.Score;
-                if (alltimePercent == -1) alltimePercent = entry.Percent;
-                if (alltimeRank == -1) alltimeRank = entry.Rank;
-
-                if (alltimeScore > 99999999) alltimeScore = 99999999;
-
                 var cachedScore = GetCachedScore(pvId, diff, ed);
-                cachedScore.RivalScore = alltimeScore;
+                cachedScore.RivalScore = (alltimeRank > 1) ? alltimeScore : -1;
                 cachedScore.RivalPercent = alltimePercent;
-                cachedScore.RivalRank = alltimeRank;
             }
         }
 
@@ -216,12 +262,15 @@ namespace K39C
         {
             for (int id = 0; id < 1000; id++)
             {
+                var exdata = playerExData.GetPvSetting(id);
                 for (int diff = 0; diff < 4; diff++)
                 {
                     for (int ed = 0; ed < 2; ed++)
                     {
                         var cachedScore = GetCachedScore(id, diff, ed);
                         cachedScore.Initialize(id, ed);
+                        cachedScore.Modules = exdata.ModuleEquip;
+                        cachedScore.Items = exdata.ItemEquip;
                         UpdateSingleScoreCacheEntry(id, diff, ed);
                         UpdateSingleScoreCacheRivalEntry(id, diff, ed);
                     }
@@ -273,6 +322,27 @@ namespace K39C
             }
         }
 
+        internal void SaveCurrentPvSetting(int pvId)
+        {
+            if (!isInitialized) return;
+
+            var diff = Manipulator.ReadInt32(GAME_INFO_ADDRESS);
+            var ed = Manipulator.ReadInt32(GAME_INFO_ADDRESS + 4);
+
+            var moduleEquipCmn = Manipulator.ReadInt32Array(PLAYER_CMN_MODULE_EQUIP_ADDRESS, 6);
+            var itemEquipCmn = Manipulator.ReadInt32Array(PLAYER_CMN_ITEM_EQUIP_ADDRESS, 24);
+            playerExData.ModuleEquip = moduleEquipCmn;
+            playerExData.ItemEquip = itemEquipCmn;
+
+            var cached = GetCachedScore(pvId, diff, ed);
+            var exdata = playerExData.GetPvSetting(pvId);
+            exdata.ModuleEquip = cached.Modules;
+            exdata.ItemEquip = cached.Items;
+
+            playerExData.UpdatePvSetting(exdata);
+            SavePlayerExData();
+        }
+
         internal void GetScoreResults()
         {
             if (!isInitialized) return;
@@ -312,7 +382,7 @@ namespace K39C
             var level = Manipulator.ReadInt32(PLAYER_LEVEL_ADDRESS);
             var plateId = Manipulator.ReadInt32(PLAYER_PLATE_ID_ADDRESS);
             var plateEff = Manipulator.ReadInt32(PLAYER_PLATE_EFF_ADDRESS);
-            var moduleEquip = Manipulator.ReadInt32Array(PLAYER_MODULE_EQUIP_ADDRESS, 3);
+            var moduleEquip = Manipulator.ReadInt32Array(PLAYER_MODULE_EQUIP_ADDRESS, 6);
 
             // ========== Get High Score Record ========== //
 
@@ -379,8 +449,11 @@ namespace K39C
 
             // ========== Update High Score Record ========== //
 
-            if (rank > 1 && (isNewScore || isNewPercent || isNewRank)) playerScore.UpdateScoreEntry(pvId, difficulty, edition, record);
+            if (isNewPercent || (rank > 1 && (isNewScore || isNewRank))) playerScore.UpdateScoreEntry(pvId, difficulty, edition, record);
 
+            // ========== Update Pd_Pv Record ========== //
+
+            SaveCurrentPvSetting(pvId);
             UpdateSingleScoreCacheEntry(pvId, difficulty, edition);
             UpdateClearCounts();
             SaveScoreHistoryData();
@@ -490,55 +563,74 @@ namespace K39C
             this.address = address;
         }
 
-        public int PvId
+        public int PvId // +0x00: pv_no
         {
             get { return Manipulator.ReadInt32(address); }
             set { Manipulator.WriteInt32(address, value); }
         }
 
-        public int Edition
+        public int Edition // +0x04: edition
         {
             get { return Manipulator.ReadInt32(address + 4); }
             set { Manipulator.WriteInt32(address + 4, value); }
         }
 
-        public int Rank // +0xac: clear rank
+        public int[] Modules // +0x08: module_equip
         {
+            get { return Manipulator.ReadInt32Array(address + 0x08, 6); }
+            set { Manipulator.WriteInt32Array(address + 0x08, value, 6); }
+        }
+
+        public int[] Items // +0x20: item_equip
+        {
+            get { return Manipulator.ReadInt32Array(address + 0x20, 24); }
+            set { Manipulator.WriteInt32Array(address + 0x20, value, 24); }
+        }
+
+        public int Rank // +0xAC: result
+        {
+            // 0: NotClear, 1: Misstake, 2: Cheap, 3: Standard, 4: Great, 5: Perfect
             get { return Manipulator.ReadInt32(address + 0xAC); }
             set { Manipulator.WriteInt32(address + 0xAC, value); }
         }
 
-        public int Score // +0xb0: score
+        public int Score // +0xB0: max_score
         {
             get { return Manipulator.ReadInt32(address + 0xB0); }
             set { Manipulator.WriteInt32(address + 0xB0, value); }
         }
 
-        public int Percent // +0xb4: best percent
+        public int Percent // +0xB4: max_attain_point
         {
             get { return Manipulator.ReadInt32(address + 0xB4); }
             set { Manipulator.WriteInt32(address + 0xB4, value); }
         }
 
-        public int RivalRank // +0xcc: rival clear rank
+        public int RivalPlayId // +0xCC: rival_playdata_id
         {
             get { return Manipulator.ReadInt32(address + 0xCC); }
             set { Manipulator.WriteInt32(address + 0xCC, value); }
         }
 
-        public int RivalScore // +0xd0: rival score
+        public int RivalScore // +0xD0: rival_score
         {
             get { return Manipulator.ReadInt32(address + 0xD0); }
             set { Manipulator.WriteInt32(address + 0xD0, value); }
         }
 
-        public int RivalPercent // +0xd4: rival percent
+        public int RivalPercent // +0xD4: rival_attain_point
         {
             get { return Manipulator.ReadInt32(address + 0xD4); }
             set { Manipulator.WriteInt32(address + 0xD4, value); }
         }
 
-        public byte OptionA // +0xe1: gamemode options
+        public int InterimRanking // +0xD8: interim ranking
+        {
+            get { return Manipulator.ReadInt32(address + 0xD8); }
+            set { Manipulator.WriteInt32(address + 0xD8, value); }
+        }
+
+        public byte OptionA // +0xE1: has_rhythm_game_option
         {
             get { return Manipulator.ReadByte(address + 0xE1); }
             set { Manipulator.WriteByte(address + 0xE1, value); }
@@ -562,12 +654,12 @@ namespace K39C
             // no clue what most of it is
             PvId = pv;
             Edition = ed;
-            Manipulator.WriteInt32(address + 0x08, 0);
-            Manipulator.WriteInt32(address + 0x0C, 0);
-            Manipulator.WriteInt32(address + 0x10, 0);
-            Manipulator.WriteInt32(address + 0x14, 0);
-            Manipulator.WriteInt32(address + 0x18, 0);
-            Manipulator.WriteInt32(address + 0x1C, 0);
+            Manipulator.WriteInt32(address + 0x08, -1);
+            Manipulator.WriteInt32(address + 0x0C, -1);
+            Manipulator.WriteInt32(address + 0x10, -1);
+            Manipulator.WriteInt32(address + 0x14, -1);
+            Manipulator.WriteInt32(address + 0x18, -1);
+            Manipulator.WriteInt32(address + 0x1C, -1);
             Manipulator.WriteInt64(address + 0x20, -1);
             Manipulator.WriteInt64(address + 0x28, -1);
             Manipulator.WriteInt64(address + 0x30, -1);
@@ -607,5 +699,53 @@ namespace K39C
             Manipulator.WriteByte(address + 0xE2, 0);
             Manipulator.WriteByte(address + 0xE3, 0);
         }
+    }
+
+    [XmlRoot]
+    public class PlayerExData
+    {
+        [XmlElement] public int[] ModuleEquip { get; set; } = null; // Common Module Equip
+        [XmlElement] public int[] ItemEquip { get; set; } = null; // Common Item Equip
+        [XmlElement] public int[] MyList1 { get; set; } = null;
+        [XmlElement] public int[] MyList2 { get; set; } = null;
+        [XmlElement] public int[] MyList3 { get; set; } = null;
+        [XmlArray] public List<PvSetting> PvSettings { get; set; } = new List<PvSetting>();
+
+        public PvSetting GetPvSetting(int id)
+        {
+            foreach (var s in PvSettings)
+            {
+                if (s.PvId == id) return s;
+            }
+            var n = new PvSetting() { PvId = id };
+            PvSettings.Add(n); return n;
+        }
+
+        public void UpdatePvSetting(PvSetting entry)
+        {
+            var length = PvSettings.Count;
+            for (int i = 0; i < length; i++)
+            {
+                var s = PvSettings[i];
+                if (s.PvId == entry.PvId)
+                {
+                    PvSettings.RemoveAt(i); break;
+                }
+            }
+            PvSettings.Add(entry);
+        }
+    }
+
+    [Serializable]
+    public class PvSetting
+    {
+        [XmlAttribute("Id")] public int PvId { get; set; } = -1;
+        [XmlElement] public int[] ModuleEquip { get; set; } = null;
+        [XmlElement] public int[] ItemEquip { get; set; } = null;
+        [XmlElement] public int SkinEquip { get; set; } = 0;
+        [XmlElement] public int BtnSeEquip { get; set; } = 0;
+        [XmlElement] public int SlideSeEquip { get; set; } = 0;
+        [XmlElement] public int ChainSeEquip { get; set; } = 0;
+        [XmlElement] public int TouchSeEquip { get; set; } = 0;
     }
 }

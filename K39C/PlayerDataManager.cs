@@ -51,6 +51,7 @@ namespace K39C
         private const long PLAYER_CLEAR_BORDER_ADDRESS = PLAYER_DATA_ADDRESS + 0xD94L; // clear_border_disp_bit
         private const long PLAYER_RANK_DISP_ADDRESS = PLAYER_DATA_ADDRESS + 0xE34L; // interim_ranking_disp_flag
         private const long PLAYER_OPTION_DISP_ADDRESS = PLAYER_DATA_ADDRESS + 0xE35L; // rhythm_game_opt_disp_flag
+        private const long PLAYER_USE_PV_MODULE_ADDRESS = PLAYER_DATA_ADDRESS + 0x2B0L; // use_pv_module_equip
 
         private const long PLAYER_PLAY_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x0D0L; // play_data_id
         private const long PLAYER_ACCEPT_ID_ADDRESS = PLAYER_DATA_ADDRESS + 0x0D4L; // accept_index
@@ -65,6 +66,7 @@ namespace K39C
         private const long ITEM_TABLE_START = PLAYER_DATA_ADDRESS + 0x2B8;
 
         private const long CURRENT_SUB_STATE = 0x0000000140EDA82CL;
+        private const long CURRENT_PVID_ADDRESS = 0x00000001418054C4L;
 
         private readonly string PLAYER_DATA_PATH = Assembly.GetSaveDataPath("PlayerData.xml");
 
@@ -74,6 +76,7 @@ namespace K39C
         private byte[] LevelNameValue;
         private long PlayerNameAddress;
         private long LevelNameAddress;
+        private int lastPvId = 0;
 
         public PlayerDataManager(Manipulator manipulator)
         {
@@ -200,6 +203,8 @@ namespace K39C
             for (long i = 0; i < 128; i++) Manipulator.WriteByte(ITEM_TABLE_START + i, 0xFF);
             // Display interim rank and rhythm options
             Manipulator.WriteByte(PLAYER_RANK_DISP_ADDRESS, 1);
+            // Display custom pv module options
+            Manipulator.WriteByte(PLAYER_USE_PV_MODULE_ADDRESS, 1);
             // Discovered by vladkorotnev, improved by rakisaionji
             if (playerData.OptionDisp)
             {
@@ -252,13 +257,23 @@ namespace K39C
                     if (step == 3) { SavePlayerData(); step = 0; }
                     if (step == 0) WritePlayerData();
                     step = 1;
+                    var pvId = Manipulator.ReadInt16(CURRENT_PVID_ADDRESS);
+                    if (pvId != lastPvId)
+                    {
+                        if (divaScore != null) divaScore.SaveCurrentPvSetting(lastPvId);
+                        lastPvId = pvId;
+                    }
                     break;
                 case SubGameState.SUB_GAME_MAIN: // 13
-                    if (step == 1 && playerData.SetPlayData)
+                    if (step == 1)
                     {
-                        if (playerData.PlayDataId < uint.MaxValue) playerData.PlayDataId++;
-                        Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayDataId);
-                        Manipulator.WriteUInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayDataId);
+                        if (playerData.SetPlayData)
+                        {
+                            if (playerData.PlayDataId < uint.MaxValue) playerData.PlayDataId++;
+                            Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayDataId);
+                            Manipulator.WriteUInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayDataId);
+                        }
+                        if (divaScore != null) divaScore.SaveCurrentPvSetting(lastPvId);
                     }
                     step = 2;
                     break;

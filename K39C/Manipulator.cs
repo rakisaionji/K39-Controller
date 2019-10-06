@@ -404,5 +404,16 @@ namespace K39C
             }
             return ret;
         }
+
+        public void WriteInt32Array(long address, int[] value, int length)
+        {
+            if (!IsAttached || address <= 0 || value == null) return;
+            if (value.Length < length) length = value.Length;
+            for (int i = 0; i < length; i++)
+            {
+                byte[] buffer = BitConverter.GetBytes(value[i]);
+                Write(address + i * 4, buffer);
+            }
+        }
     }
 }
