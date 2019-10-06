@@ -173,7 +173,7 @@ namespace K39C
             }
             // First write of play start id, only once per session
             if (playerData.SetPlayData) Manipulator.WriteUInt32(PLAYER_START_ID_ADDRESS, playerData.PlayDataId);
-            if (divaScore != null) divaScore.SaveScoreData();
+            if (divaScore != null) divaScore.SavePlayerScoreData();
         }
 
         public void Initialize()

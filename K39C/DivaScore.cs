@@ -11,6 +11,7 @@ namespace K39C
     {
         private Manipulator Manipulator;
         private PlayerScore playerScore;
+        private PlayerScore rivalScore;
         private ScoreHistory scoreHistory;
         private bool isInitialized;
         private long scoreArray;
@@ -28,7 +29,8 @@ namespace K39C
         private const long CURRENT_SONG_NAME_ADDRESS = 0x0000000140D0A578L;
         private const long SONG_CLEAR_COUNTS_ADDRESS = 0x00000001411A95E8L;
 
-        private readonly string HI_SCORE_PATH = Assembly.GetSaveDataPath("PlayerScore.dat");
+        private readonly string PLAYER_SCORE_PATH = Assembly.GetSaveDataPath("PlayerScore.dat");
+        private readonly string RIVAL_SCORE_PATH = Assembly.GetSaveDataPath("RivalScore.dat");
         private readonly string SCORE_LOG_PATH = Assembly.GetSaveDataPath(String.Format("ScoreData\\ScoreData_{0:yyyyMMdd}.dat", DateTime.UtcNow));
         private readonly string SCORE_DATA_PATH = Assembly.GetSaveDataPath("ScoreData");
 
@@ -48,19 +50,19 @@ namespace K39C
         private void Initialize()
         {
             if (!Directory.Exists(SCORE_DATA_PATH)) Directory.CreateDirectory(SCORE_DATA_PATH);
-            ReadScoreData();
+            ReadPlayerScoreData();
             UpdateScoreCache();
             UpdateClearCounts();
-            ReadHistoryData();
+            ReadScoreHistoryData();
             isInitialized = true;
         }
 
-        private void ReadScoreData()
+        private void ReadPlayerScoreData()
         {
             try
             {
                 var s = new XmlSerializer(typeof(PlayerScore));
-                using (var fs = new FileStream(HI_SCORE_PATH, FileMode.Open, FileAccess.Read))
+                using (var fs = new FileStream(PLAYER_SCORE_PATH, FileMode.Open, FileAccess.Read))
                 {
                     using (var gs = new GZipStream(fs, CompressionMode.Decompress))
                     {
@@ -77,7 +79,7 @@ namespace K39C
             }
         }
 
-        private void ReadHistoryData()
+        private void ReadScoreHistoryData()
         {
             try
             {
@@ -99,11 +101,11 @@ namespace K39C
             }
         }
 
-        internal void SaveScoreData()
+        internal void SavePlayerScoreData()
         {
             if (!isInitialized) return;
             var s = new XmlSerializer(typeof(PlayerScore));
-            using (var fs = new FileStream(HI_SCORE_PATH, FileMode.Create, FileAccess.Write))
+            using (var fs = new FileStream(PLAYER_SCORE_PATH, FileMode.Create, FileAccess.Write))
             {
                 using (var gs = new GZipStream(fs, CompressionMode.Compress))
                 {
@@ -114,7 +116,7 @@ namespace K39C
             }
         }
 
-        internal void SaveHistoryData()
+        internal void SaveScoreHistoryData()
         {
             if (!isInitialized) return;
             var s = new XmlSerializer(typeof(ScoreHistory));
@@ -336,7 +338,7 @@ namespace K39C
 
             UpdateSingleScoreCacheEntry(pvId, difficulty, edition);
             UpdateClearCounts();
-            SaveHistoryData();
+            SaveScoreHistoryData();
         }
     }
 
