@@ -51,6 +51,7 @@ namespace K39C
         {
             if (!Directory.Exists(SCORE_DATA_PATH)) Directory.CreateDirectory(SCORE_DATA_PATH);
             ReadPlayerScoreData();
+            ReadRivalScoreData();
             UpdateScoreCache();
             UpdateClearCounts();
             ReadScoreHistoryData();
@@ -76,6 +77,27 @@ namespace K39C
             catch (Exception)
             {
                 playerScore = new PlayerScore();
+            }
+        }
+
+        private void ReadRivalScoreData()
+        {
+            try
+            {
+                var s = new XmlSerializer(typeof(PlayerScore));
+                using (var fs = new FileStream(RIVAL_SCORE_PATH, FileMode.Open, FileAccess.Read))
+                {
+                    using (var gs = new GZipStream(fs, CompressionMode.Decompress))
+                    {
+                        rivalScore = (PlayerScore)s.Deserialize(gs);
+                        gs.Close();
+                    }
+                    fs.Close();
+                }
+            }
+            catch (Exception)
+            {
+                rivalScore = null;
             }
         }
 
@@ -167,6 +189,29 @@ namespace K39C
             }
         }
 
+        void UpdateSingleScoreCacheRivalEntry(int pvId, int diff, int ed)
+        {
+            if (rivalScore == null) return;
+            var entry = rivalScore.GetScoreEntry(pvId, diff, ed);
+            if (entry.Rank > 1 && entry.Score > 0 && entry.Percent > 0)
+            {
+                int alltimeScore = entry.AlltimeScore;
+                int alltimePercent = entry.AlltimePercent;
+                int alltimeRank = entry.AlltimeRank;
+
+                if (alltimeScore == -1) alltimeScore = entry.Score;
+                if (alltimePercent == -1) alltimePercent = entry.Percent;
+                if (alltimeRank == -1) alltimeRank = entry.Rank;
+
+                if (alltimeScore > 99999999) alltimeScore = 99999999;
+
+                var cachedScore = GetCachedScore(pvId, diff, ed);
+                cachedScore.RivalScore = alltimeScore;
+                cachedScore.RivalPercent = alltimePercent;
+                cachedScore.RivalRank = alltimeRank;
+            }
+        }
+
         void UpdateScoreCache()
         {
             for (int id = 0; id < 1000; id++)
@@ -178,7 +223,7 @@ namespace K39C
                         var cachedScore = GetCachedScore(id, diff, ed);
                         cachedScore.Initialize(id, ed);
                         UpdateSingleScoreCacheEntry(id, diff, ed);
-                        // UpdateSingleScoreCacheRivalEntry(id, diff, ed);
+                        UpdateSingleScoreCacheRivalEntry(id, diff, ed);
                     }
                 }
             }
