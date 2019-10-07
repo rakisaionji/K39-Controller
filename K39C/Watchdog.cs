@@ -139,6 +139,9 @@ namespace K39C
             else
             {
                 var sb = new StringBuilder();
+#if DEBUG
+                sb.Append(">>>> DEBUG BUILD <<<< ");
+#endif
                 sb.Append("PDAFT Loader for S39 and K39 by Team Shimapan");
                 sb.AppendFormat(" - Codename : {0}", Program.K39C_CODEVER);
                 sb.AppendFormat(" - Version : {0}", Program.K39C_VERSION);

@@ -273,7 +273,7 @@ namespace K39C
                             Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayDataId);
                             Manipulator.WriteUInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayDataId);
                         }
-                        if (divaScore != null) divaScore.SaveCurrentPvSetting(lastPvId);
+                        if (divaScore != null) divaScore.SaveCurrentPvSetting(Manipulator.ReadInt16(CURRENT_PVID_ADDRESS));
                     }
                     step = 2;
                     break;
