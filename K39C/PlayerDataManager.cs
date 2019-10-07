@@ -261,7 +261,7 @@ namespace K39C
                     if (pvId != lastPvId)
                     {
                         if (divaScore != null) divaScore.SaveCurrentPvSetting(lastPvId);
-                        lastPvId = pvId;
+                        lastPvId = pvId; SavePlayerData();
                     }
                     break;
                 case SubGameState.SUB_GAME_MAIN: // 13

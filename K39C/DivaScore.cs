@@ -17,6 +17,7 @@ namespace K39C
 
         private bool isInitialized;
         private long scoreArray;
+        private long myListArray;
 
         private const long PLAYER_DATA_ADDRESS = 0x00000001411A8850L;
         private const long PLAYER_NAME_ADDRESS = PLAYER_DATA_ADDRESS + 0x0E0L;
@@ -43,11 +44,19 @@ namespace K39C
         {
             isInitialized = false;
             Manipulator = manipulator;
+            // Allocation for Scores, thanks somewhatlurker
             scoreArray = Manipulator.AllocateMemory(4 * 1000 * 2 * 0xE4).ToInt64();
             for (int i = 0; i < 4; i++)
             {
                 Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5D0, scoreArray + i * 1000 * 2 * 0xE4);
                 Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x5D8, scoreArray + (i + 1) * 1000 * 2 * 0xE4);
+            }
+            // Allocation for MyLists, thanks vladkorotnev
+            myListArray = Manipulator.AllocateMemory(3 * 40 * 4).ToInt64();
+            for (int i = 0; i < 3; i++)
+            {
+                Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x588, myListArray + i * 40 * 4);
+                Manipulator.WriteInt64(PLAYER_DATA_ADDRESS + i * 0x18 + 0x590, myListArray + (i + 1) * 40 * 4);
             }
             new Thread(new ThreadStart(Initialize)).Start();
         }
@@ -58,12 +67,46 @@ namespace K39C
             ReadPlayerExData();
             ReadPlayerScoreData();
             ReadRivalScoreData();
+            ReadPlayerMyListData();
             UpdateScoreCache();
             UpdateClearCounts();
+            UpdateMyListCache();
             ReadScoreHistoryData();
             Manipulator.WriteInt32Array(PLAYER_CMN_MODULE_EQUIP_ADDRESS, playerExData.ModuleEquip, 6);
             Manipulator.WriteInt32Array(PLAYER_CMN_ITEM_EQUIP_ADDRESS, playerExData.ModuleEquip, 24);
             isInitialized = true;
+        }
+
+        private void ReadPlayerMyListData()
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                try
+                {
+                    var f = Assembly.GetSaveDataPath(String.Format("MyList{0}.txt", i));
+                    if (!File.Exists(f)) continue;
+                    var t = File.ReadAllText(f).Split(',');
+
+                    var n = t.Length;
+                    if (n == 0) continue;
+                    var s = new int[n];
+
+                    for (int j = 0; j < n; j++)
+                    {
+                        s[j] = Convert.ToInt32(t[j]);
+                    }
+                    switch (i)
+                    {
+                        case 1: playerExData.MyList1 = s; break;
+                        case 2: playerExData.MyList2 = s; break;
+                        case 3: playerExData.MyList3 = s; break;
+                        default: break;
+                    }
+                    File.Delete(f);
+                }
+                catch (Exception) { continue; }
+            }
+            SavePlayerExData();
         }
 
         private void ReadPlayerExData()
@@ -195,6 +238,36 @@ namespace K39C
                     gs.Close();
                 }
                 fs.Close();
+            }
+        }
+
+        void UpdateMyListCache()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                int[] a = null;
+                switch (i)
+                {
+                    case 0: a = playerExData.MyList1; break;
+                    case 1: a = playerExData.MyList2; break;
+                    case 2: a = playerExData.MyList3; break;
+                    default: break;
+                }
+                if (a == null) continue;
+                var l = a.Length;
+                var c = myListArray + i * 40 * 4;
+                for (int j = 0; j < 40; j++)
+                {
+                    if (j < l)
+                    {
+                        Manipulator.WriteInt32(c, a[j]);
+                    }
+                    else
+                    {
+                        Manipulator.WriteInt32(c, -1);
+                    }
+                    c = c + 4;
+                }
             }
         }
 
@@ -654,30 +727,8 @@ namespace K39C
             // no clue what most of it is
             PvId = pv;
             Edition = ed;
-            Manipulator.WriteInt32(address + 0x08, -1);
-            Manipulator.WriteInt32(address + 0x0C, -1);
-            Manipulator.WriteInt32(address + 0x10, -1);
-            Manipulator.WriteInt32(address + 0x14, -1);
-            Manipulator.WriteInt32(address + 0x18, -1);
-            Manipulator.WriteInt32(address + 0x1C, -1);
-            Manipulator.WriteInt64(address + 0x20, -1);
-            Manipulator.WriteInt64(address + 0x28, -1);
-            Manipulator.WriteInt64(address + 0x30, -1);
-            Manipulator.WriteInt64(address + 0x38, -1);
-            Manipulator.WriteInt64(address + 0x40, -1);
-            Manipulator.WriteInt64(address + 0x48, -1);
-            Manipulator.WriteInt64(address + 0x50, -1);
-            Manipulator.WriteInt64(address + 0x58, -1);
-            Manipulator.WriteInt64(address + 0x60, -1);
-            Manipulator.WriteInt64(address + 0x68, -1);
-            Manipulator.WriteInt64(address + 0x70, -1);
-            Manipulator.WriteInt64(address + 0x78, -1);
-            Manipulator.WriteInt32(address + 0x80, 0x01010101);
-            Manipulator.WriteInt32(address + 0x84, 0x01010101);
-            Manipulator.WriteInt32(address + 0x88, 0x01010101);
-            Manipulator.WriteInt32(address + 0x8C, 0x01010101);
-            Manipulator.WriteInt32(address + 0x90, 0x01010101);
-            Manipulator.WriteInt32(address + 0x94, 0x01010101);
+            Manipulator.WriteBytes(address + 0x08, 0xFF, 0x78);
+            Manipulator.WriteBytes(address + 0x80, 0x01, 0x18);
             Manipulator.WriteInt32(address + 0x98, 0);
             Manipulator.WriteInt64(address + 0x9C, -1);
             Manipulator.WriteInt64(address + 0xA4, -1);
@@ -686,18 +737,11 @@ namespace K39C
             Manipulator.WriteInt32(address + 0xB8, -1);
             Manipulator.WriteByte(address + 0xBC, 0);
             Manipulator.WriteInt64(address + 0xC0, -1);
-            Manipulator.WriteByte(address + 0xC8, 0);
             Manipulator.WriteInt32(address + 0xCC, -1);
+            Manipulator.WriteByte(address + 0xC8, 0);
             Manipulator.WriteInt64(address + 0xD0, 0);
             Manipulator.WriteInt32(address + 0xD8, -1);
-            Manipulator.WriteByte(address + 0xDC, 0);
-            Manipulator.WriteByte(address + 0xDD, 0);
-            Manipulator.WriteByte(address + 0xDE, 0);
-            Manipulator.WriteByte(address + 0xDF, 0);
-            Manipulator.WriteByte(address + 0xE0, 0);
-            Manipulator.WriteByte(address + 0xE1, 0);
-            Manipulator.WriteByte(address + 0xE2, 0);
-            Manipulator.WriteByte(address + 0xE3, 0);
+            Manipulator.WriteBytes(address + 0xDC, 0, 8);
         }
     }
 

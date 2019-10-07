@@ -34,7 +34,7 @@ namespace K39C
     {
         [XmlAttribute("great")] public byte ShowGreat { get; set; } = 1;
         [XmlAttribute("excellent")] public byte ShowExcellent { get; set; } = 1;
-        [XmlAttribute("rival")] public byte ShowRival { get; set; } = 0;
+        [XmlAttribute("rival")] public byte ShowRival { get; set; } = 1;
 
         public byte ToByte()
         {

@@ -12,8 +12,8 @@ namespace K39C
     class Program
     {
         internal static readonly string K39C_CODEVER = "K39-PICO";
-        internal static readonly string K39C_VERSION = "7.10.41";
-        internal static readonly string K39C_RELDATE = "2019-10-01";
+        internal static readonly string K39C_VERSION = "7.10.42";
+        internal static readonly string K39C_RELDATE = "2019-10-10";
 
         private static readonly string APP_SETTING_PATH = Assembly.GetSaveDataPath("Settings.xml");
         private static readonly string DIVA_PROCESS_NAME = "diva";

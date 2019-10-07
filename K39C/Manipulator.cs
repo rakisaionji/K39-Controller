@@ -415,5 +415,13 @@ namespace K39C
                 Write(address + i * 4, buffer);
             }
         }
+
+        public void WriteBytes(long address, byte value, int length)
+        {
+            if (!IsAttached || address <= 0) return;
+            byte[] buffer = new byte[length];
+            for (int i = 0; i < length; i++) buffer[i] = value;
+            Write(address, buffer);
+        }
     }
 }
