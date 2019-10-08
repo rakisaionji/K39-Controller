@@ -73,7 +73,7 @@ namespace K39C
             UpdateMyListCache();
             ReadScoreHistoryData();
             Manipulator.WriteInt32Array(PLAYER_CMN_MODULE_EQUIP_ADDRESS, playerExData.ModuleEquip, 6);
-            Manipulator.WriteInt32Array(PLAYER_CMN_ITEM_EQUIP_ADDRESS, playerExData.ModuleEquip, 24);
+            Manipulator.WriteInt32Array(PLAYER_CMN_ITEM_EQUIP_ADDRESS, playerExData.ItemEquip, 24);
             isInitialized = true;
             SavePlayerExData();
         }
