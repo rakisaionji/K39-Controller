@@ -257,7 +257,7 @@ namespace K39C
                     if (step == 3) SavePlayerData();
                     if (step == 0) WritePlayerData();
                     step = 1;
-                    var pvId = Manipulator.ReadInt16(CURRENT_PVID_ADDRESS);
+                    var pvId = Manipulator.ReadInt32(CURRENT_PVID_ADDRESS);
                     if (pvId != lastPvId)
                     {
                         if (divaScore != null) divaScore.SaveCurrentPvSetting(lastPvId);
@@ -265,7 +265,7 @@ namespace K39C
                     }
                     break;
                 case SubGameState.SUB_GAME_MAIN: // 13
-                    if (step == 1 && divaScore != null) divaScore.SaveCurrentPvSetting(Manipulator.ReadInt16(CURRENT_PVID_ADDRESS));
+                    if (step == 1 && divaScore != null) divaScore.SaveCurrentPvSetting(Manipulator.ReadInt32(CURRENT_PVID_ADDRESS));
                     step = 2;
                     break;
                 case SubGameState.SUB_STAGE_RESULT: // 15
