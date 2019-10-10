@@ -77,6 +77,9 @@ namespace K39C
         private long PlayerNameAddress;
         private long LevelNameAddress;
         private int lastPvId = 0;
+        private Random rnd = new Random();
+        private int acceptIdx;
+        private int startIdx;
 
         public PlayerDataManager(Manipulator manipulator)
         {
@@ -153,8 +156,12 @@ namespace K39C
             Manipulator.WriteInt32(PLAYER_HP_VOL_ADDRESS, playerData.HpVol);
             if (playerData.SetPlayData)
             {
-                Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayDataId);
-                Manipulator.WriteUInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayDataId);
+                acceptIdx = rnd.Next(1000, 1500);
+                startIdx = rnd.Next(1500, 2000);
+
+                Manipulator.WriteInt32(PLAYER_PLAY_ID_ADDRESS, 1);
+                Manipulator.WriteInt32(PLAYER_ACCEPT_ID_ADDRESS, acceptIdx);
+                Manipulator.WriteInt32(PLAYER_START_ID_ADDRESS, startIdx);
             }
         }
 
@@ -166,7 +173,6 @@ namespace K39C
             playerData.ActSlideVol = Manipulator.ReadInt32(PLAYER_ACT_SLVOL_ADDRESS);
             playerData.HpVol = Manipulator.ReadInt32(PLAYER_HP_VOL_ADDRESS);
             playerData.PvSortKind = Manipulator.ReadInt32(PLAYER_PV_SORT_KIND_ADDRESS);
-            if (playerData.SetPlayData) playerData.PlayDataId = Manipulator.ReadUInt32(PLAYER_PLAY_ID_ADDRESS);
             // Write to file
             var serializer = new XmlSerializer(typeof(PlayerData));
             using (var writer = new StreamWriter(PLAYER_DATA_PATH))
@@ -174,8 +180,6 @@ namespace K39C
                 serializer.Serialize(writer, playerData);
                 writer.Close();
             }
-            // First write of play start id, only once per session
-            if (playerData.SetPlayData) Manipulator.WriteUInt32(PLAYER_START_ID_ADDRESS, playerData.PlayDataId);
             if (divaScore != null) divaScore.SavePlayerScoreData();
         }
 
@@ -232,8 +236,6 @@ namespace K39C
             // }
             // Display clear borders on the progress bar (by vladkorotnev)
             Manipulator.WriteByte(PLAYER_CLEAR_BORDER_ADDRESS, playerData.ClearBorder.ToByte());
-            // First write of play start id, only once per starup
-            if (playerData.SetPlayData) Manipulator.WriteUInt32(PLAYER_START_ID_ADDRESS, playerData.PlayDataId);
             WritePlayerData();
         }
 
@@ -247,14 +249,12 @@ namespace K39C
             switch (currentSubState)
             {
                 case SubGameState.SUB_LOGO: // 4
-                    if (step == 2 && playerData.SetPlayData) playerData.PlayDataId--;
                     if (step == 3) SavePlayerData();
                     step = 0;
                     break;
                 case SubGameState.SUB_SELECTOR: // 12
                 case SubGameState.SUB_GAME_SEL: // 14
-                    if (step == 2 && playerData.SetPlayData) playerData.PlayDataId--;
-                    if (step == 3) { SavePlayerData(); step = 0; }
+                    if (step == 3) SavePlayerData();
                     if (step == 0) WritePlayerData();
                     step = 1;
                     var pvId = Manipulator.ReadInt16(CURRENT_PVID_ADDRESS);
@@ -265,16 +265,7 @@ namespace K39C
                     }
                     break;
                 case SubGameState.SUB_GAME_MAIN: // 13
-                    if (step == 1)
-                    {
-                        if (playerData.SetPlayData)
-                        {
-                            if (playerData.PlayDataId < uint.MaxValue) playerData.PlayDataId++;
-                            Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playerData.PlayDataId);
-                            Manipulator.WriteUInt32(PLAYER_ACCEPT_ID_ADDRESS, playerData.PlayDataId);
-                        }
-                        if (divaScore != null) divaScore.SaveCurrentPvSetting(Manipulator.ReadInt16(CURRENT_PVID_ADDRESS));
-                    }
+                    if (step == 1 && divaScore != null) divaScore.SaveCurrentPvSetting(Manipulator.ReadInt16(CURRENT_PVID_ADDRESS));
                     step = 2;
                     break;
                 case SubGameState.SUB_STAGE_RESULT: // 15

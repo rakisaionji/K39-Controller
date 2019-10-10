@@ -326,6 +326,7 @@ namespace K39C
             if (alltimePercent > 0)
             {
                 var cachedScore = GetCachedScore(pvId, diff, ed);
+                cachedScore.RivalPlayId = 2;
                 cachedScore.RivalScore = (alltimeRank > 1) ? alltimeScore : -1;
                 cachedScore.RivalPercent = alltimePercent;
             }

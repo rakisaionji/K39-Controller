@@ -23,8 +23,7 @@ namespace K39C
         [XmlElement] public int HpVol { get; set; } = 100;
         [XmlElement] public int PasswordStatus { get; set; } = -1;
         [XmlElement] public int PvSortKind { get; set; } = 2;
-        [XmlElement] public uint PlayDataId { get; set; } = 0;
-        [XmlElement] public bool SetPlayData { get; set; } = false;
+        [XmlElement] public bool SetPlayData { get; set; } = true;
         [XmlElement] public ClearBorder ClearBorder { get; set; } = new ClearBorder();
         [XmlElement] public bool OptionDisp { get; set; } = true;
         [XmlElement] public bool KeepOption { get; set; } = false;
