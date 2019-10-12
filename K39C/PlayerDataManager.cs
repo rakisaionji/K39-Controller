@@ -80,6 +80,7 @@ namespace K39C
         private Random rnd = new Random();
         private int acceptIdx;
         private int startIdx;
+        private uint playIdx;
 
         public PlayerDataManager(Manipulator manipulator)
         {
@@ -156,10 +157,7 @@ namespace K39C
             Manipulator.WriteInt32(PLAYER_HP_VOL_ADDRESS, playerData.HpVol);
             if (playerData.SetPlayData)
             {
-                acceptIdx = rnd.Next(1000, 1500);
-                startIdx = rnd.Next(1500, 2000);
-
-                Manipulator.WriteInt32(PLAYER_PLAY_ID_ADDRESS, 1);
+                Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playIdx);
                 Manipulator.WriteInt32(PLAYER_ACCEPT_ID_ADDRESS, acceptIdx);
                 Manipulator.WriteInt32(PLAYER_START_ID_ADDRESS, startIdx);
             }
@@ -173,6 +171,7 @@ namespace K39C
             playerData.ActSlideVol = Manipulator.ReadInt32(PLAYER_ACT_SLVOL_ADDRESS);
             playerData.HpVol = Manipulator.ReadInt32(PLAYER_HP_VOL_ADDRESS);
             playerData.PvSortKind = Manipulator.ReadInt32(PLAYER_PV_SORT_KIND_ADDRESS);
+            if (playerData.SetPlayData) playerData.PlayDataId = playIdx;
             // Write to file
             var serializer = new XmlSerializer(typeof(PlayerData));
             using (var writer = new StreamWriter(PLAYER_DATA_PATH))
@@ -236,6 +235,13 @@ namespace K39C
             // }
             // Display clear borders on the progress bar (by vladkorotnev)
             Manipulator.WriteByte(PLAYER_CLEAR_BORDER_ADDRESS, playerData.ClearBorder.ToByte());
+            // First write of play start id, only once per starup
+            if (playerData.SetPlayData)
+            {
+                playIdx = playerData.PlayDataId;
+                if (playIdx < 10001 || playIdx == uint.MaxValue) playIdx = 10001;
+                Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playIdx);
+            }
             WritePlayerData();
         }
 
@@ -254,8 +260,13 @@ namespace K39C
                     break;
                 case SubGameState.SUB_SELECTOR: // 12
                 case SubGameState.SUB_GAME_SEL: // 14
-                    if (step == 3) SavePlayerData();
-                    if (step == 0) WritePlayerData();
+                    if (step == 3) { SavePlayerData(); WritePlayerData(); }
+                    if (step == 0)
+                    {
+                        acceptIdx = rnd.Next(1000, 1500);
+                        startIdx = rnd.Next(1500, 2000);
+                        WritePlayerData();
+                    }
                     step = 1;
                     var pvId = Manipulator.ReadInt32(CURRENT_PVID_ADDRESS);
                     if (pvId != lastPvId)
@@ -269,7 +280,7 @@ namespace K39C
                     step = 2;
                     break;
                 case SubGameState.SUB_STAGE_RESULT: // 15
-                    if (step == 2 && divaScore != null) { divaScore.GetScoreResults(); }
+                    if (step == 2 && divaScore != null) { divaScore.GetScoreResults(); /* playIdx++; SavePlayerData(); */ }
                     step = 3;
                     break;
                 default:
