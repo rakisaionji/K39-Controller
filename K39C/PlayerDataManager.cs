@@ -80,7 +80,7 @@ namespace K39C
         private Random rnd = new Random();
         private int acceptIdx;
         private int startIdx;
-        private uint playIdx;
+        // private uint playIdx;
 
         public PlayerDataManager(Manipulator manipulator)
         {
@@ -157,7 +157,8 @@ namespace K39C
             Manipulator.WriteInt32(PLAYER_HP_VOL_ADDRESS, playerData.HpVol);
             if (playerData.SetPlayData)
             {
-                Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playIdx);
+                Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, 1);
+                // Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playIdx);
                 Manipulator.WriteInt32(PLAYER_ACCEPT_ID_ADDRESS, acceptIdx);
                 Manipulator.WriteInt32(PLAYER_START_ID_ADDRESS, startIdx);
             }
@@ -171,7 +172,7 @@ namespace K39C
             playerData.ActSlideVol = Manipulator.ReadInt32(PLAYER_ACT_SLVOL_ADDRESS);
             playerData.HpVol = Manipulator.ReadInt32(PLAYER_HP_VOL_ADDRESS);
             playerData.PvSortKind = Manipulator.ReadInt32(PLAYER_PV_SORT_KIND_ADDRESS);
-            if (playerData.SetPlayData) playerData.PlayDataId = playIdx;
+            // if (playerData.SetPlayData) playerData.PlayDataId = playIdx;
             // Write to file
             var serializer = new XmlSerializer(typeof(PlayerData));
             using (var writer = new StreamWriter(PLAYER_DATA_PATH))
@@ -236,12 +237,12 @@ namespace K39C
             // Display clear borders on the progress bar (by vladkorotnev)
             Manipulator.WriteByte(PLAYER_CLEAR_BORDER_ADDRESS, playerData.ClearBorder.ToByte());
             // First write of play start id, only once per starup
-            if (playerData.SetPlayData)
-            {
-                playIdx = playerData.PlayDataId;
-                if (playIdx < 10001 || playIdx == uint.MaxValue) playIdx = 10001;
-                Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playIdx);
-            }
+            // if (playerData.SetPlayData)
+            // {
+            //     playIdx = playerData.PlayDataId;
+            //     if (playIdx < 10001 || playIdx == uint.MaxValue) playIdx = 10001;
+            //     Manipulator.WriteUInt32(PLAYER_PLAY_ID_ADDRESS, playIdx);
+            // }
             WritePlayerData();
         }
 
