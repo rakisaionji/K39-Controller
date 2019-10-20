@@ -43,6 +43,7 @@ namespace K39C
         {
             [XmlElement] public string KeychipId { get; set; } = String.Empty;
             [XmlElement] public string MainId { get; set; } = String.Empty;
+            [XmlElement] public bool HideId { get; set; } = false;
             [XmlElement] public TimerDisplay SysTimer { get; set; } = TimerDisplay.DEFAULT;
             [XmlElement] public bool TemporalAA { get; set; } = true;
             [XmlElement] public bool MorphologicalAA { get; set; } = true;

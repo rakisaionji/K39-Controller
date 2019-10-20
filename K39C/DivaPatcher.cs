@@ -101,6 +101,12 @@ namespace K39C
                 case ErrorDisplay.DEFAULT:
                     break;
             }
+            // Force Hide Main ID and Keychip ID
+            if (Settings.System.HideId)
+            {
+                Manipulator.WritePatch(0x00000001409A5918, new byte[] { 0x00 });
+                Manipulator.WritePatch(0x00000001409A5928, new byte[] { 0x00 });
+            }
             // Other Features by somewhatlurker, improved by rakisaionji
             var cardStatus = Settings.DivaPatches.CardIcon;
             if (cardStatus != StatusIcon.DEFAULT)
@@ -152,29 +158,28 @@ namespace K39C
             }
             if (Settings.DivaPatches.HidePvUi)
             {
-                Manipulator.WritePatch(0x000000014048F594, new byte[] { 0x6A, 0x05 }); // skip button panel image
-                // Manipulator.WritePatch(0x000000014048F59C, new byte[] { 0x77, 0x04 }); // skip screenshot stuff (actually seems not relevant)
+                Manipulator.WritePatch(0x000000014048FA91, new byte[] { 0xEB, 0x6F }); // skip button panel image ( JMP  0x14048FB02 )
 
                 // patch minimum PV UI state to 1 instead of 0
                 // hook check for lyrics enabled (UI state < 2) to change UI state 0 into 1
                 // dump new code in the skipped button panel condition
-                Manipulator.WritePatch(0x000000014048FA26, new byte[] { 0xC7, 0x83, 0x58, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 });  // MOV dword ptr [0x158 + RBX], 0x1
-                Manipulator.WritePatch(0x000000014048FA30, new byte[] { 0xC6, 0x80, 0x3A, 0xD1, 0x02, 0x00, 0x01 });                    // MOV byte ptr [0x2d13a + RAX], 0x1
-                Manipulator.WritePatch(0x000000014048FA37, new byte[] { 0xE9, 0xF8, 0xFB, 0xFF, 0xFF });                                // JMP 0x14048f634
+                Manipulator.WritePatch(0x000000014048FA93, new byte[] { 0xC7, 0x83, 0x58, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 }); // MOV  dword ptr [0x158 + RBX],0x1
+                Manipulator.WritePatch(0x000000014048FA9D, new byte[] { 0xC6, 0x80, 0x3A, 0xD1, 0x02, 0x00, 0x01 }); // MOV  byte ptr [0x2d13a + RAX],0x1
+                Manipulator.WritePatch(0x000000014048FAA4, new byte[] { 0xE9, 0x8B, 0xFB, 0xFF, 0xFF }); // JMP  0x14048F634
 
-                Manipulator.WritePatch(0x000000014048F62D, new byte[] { 0xE9, 0xF4, 0x03, 0x00, 0x00 }); // JMP 0x14048FA26
+                Manipulator.WritePatch(0x000000014048F62D, new byte[] { 0xE9, 0x61, 0x04, 0x00, 0x00 }); // JMP  0x14048FA93
             }
             if (Settings.DivaPatches.HideLyrics)
             {
                 Manipulator.WritePatch(0x00000001404E7A25, new byte[] { 0x00, 0x00 });
                 Manipulator.WritePatch(0x00000001404E7950, new byte[] { 0x48, 0xE9 }); // ensure first iteration doesn't run
             }
-            if (Settings.DivaPatches.HidePvMark) // Revised by rakisaionji
+            if (Settings.DivaPatches.HidePvMark)
                 Manipulator.WritePatch(0x0000000140A13A88, new byte[] { 0x00 });
-            if (Settings.DivaPatches.HideSeBtn) // Revised by rakisaionji
-                Manipulator.WritePatchNop(0x000000014013CE58, 19);
-            if (Settings.DivaPatches.HideVolume) // Revised by rakisaionji
-                Manipulator.WritePatchNop(0x0000000140624BDF, 15);
+            if (Settings.DivaPatches.HideSeBtn)
+                Manipulator.WritePatch(0x00000001409A4D60, new byte[] { 0xC0, 0xD3 });
+            if (Settings.DivaPatches.HideVolume)
+                Manipulator.WritePatch(0x0000000140A85F10, new byte[] { 0xE0, 0x50 });
             // System Timer Patches, by samyuu and rakisaionji
             var sys_timer = (int)Settings.System.SysTimer;
             if (sys_timer > 1) // HIDDEN

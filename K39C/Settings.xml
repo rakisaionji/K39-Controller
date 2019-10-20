@@ -9,6 +9,7 @@
   <System>
     <KeychipId></KeychipId>
     <MainId></MainId>
+    <HideId>false</HideId>
     <SysTimer>DEFAULT</SysTimer>
     <TemporalAA>true</TemporalAA>
     <MorphologicalAA>true</MorphologicalAA>
