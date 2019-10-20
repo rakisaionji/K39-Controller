@@ -2,7 +2,7 @@
 
 namespace K39C
 {
-    public class DivaPatcher
+    internal class DivaPatcher
     {
         Settings Settings;
         Manipulator Manipulator;
@@ -11,7 +11,7 @@ namespace K39C
         private const int SYS_TIMER_TIME = 60 * 39;
         // private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
 
-        public DivaPatcher(Manipulator manipulator, Settings settings)
+        internal DivaPatcher(Manipulator manipulator, Settings settings)
         {
             patches = new Dictionary<long, byte[]>
             {
@@ -44,7 +44,7 @@ namespace K39C
             Settings = settings;
         }
 
-        public void ApplyPatches()
+        internal void ApplyPatches()
         {
             foreach (var patch in patches)
                 Manipulator.WritePatch(patch.Key, patch.Value);
@@ -85,9 +85,23 @@ namespace K39C
                 Manipulator.WritePatch(0x000000014066CEAE, new byte[] { 0x05 }); // Size
             }
             // Touch effect is annoying without Scale Component in other resolutions
-            // It's not cool, just yeet it for fuck's sake, by rakisaionji
             if (Settings.Executable.IsCustomRes() && !Settings.Components.ScaleComponent)
-                Manipulator.WritePatch(0x0000000140A390C0, new byte[] { 0x00 });
+            {
+                Manipulator.WritePatch(0x00000001406A1FE2, new byte[] { 0x7E });                                            // MOVQ  XMM0,qword ptr [0x168 + RSP] (change to MOVQ)
+                Manipulator.WritePatch(0x00000001406A1FE9, new byte[] { 0x66, 0x0F, 0xD6, 0x44, 0x24, 0x6C });              // MOVQ  qword ptr [RSP + 0x6c],XMM0
+                Manipulator.WritePatch(0x00000001406A1FEF, new byte[] { 0xC7, 0x44, 0x24, 0x74, 0x00, 0x00, 0x00, 0x00 });  // MOV  dword ptr [RSP + 0x74],0x0
+                Manipulator.WritePatch(0x00000001406A1FF7, new byte[] { 0xEB, 0x0E });                                      // JMP  0x1406a2007 (to rest of function as usual)
+                Manipulator.WritePatch(0x00000001406A1FF9, new byte[] { 0x66, 0x48, 0x0F, 0x6E, 0xC2 });              // MOVQ  XMM0,RDX (load touch pos)
+                Manipulator.WritePatch(0x00000001406A1FFE, new byte[] { 0xEB, 0x5D });                                // JMP  0x1406a205d
+                Manipulator.WritePatch(0x00000001406A205D, new byte[] { 0x0F, 0x2A, 0x0D, 0xB8, 0x6A, 0x31, 0x00 });  // CVTPI2PS  XMM1,qword ptr [0x1409b8b1c] (load 1280x720)
+                Manipulator.WritePatch(0x00000001406A2064, new byte[] { 0x0F, 0x12, 0x51, 0x1C });                    // MOVLPS  XMM2,qword ptr [RCX + 0x1c] (load actual res)
+                Manipulator.WritePatch(0x00000001406A2068, new byte[] { 0xE9, 0x14, 0xFF, 0xFF, 0xFF });              // JMP  0x1406a1f81
+                Manipulator.WritePatch(0x00000001406A1F81, new byte[] { 0x0F, 0x59, 0xC1 });                          // MULPS  XMM0,XMM1
+                Manipulator.WritePatch(0x00000001406A1F84, new byte[] { 0x0F, 0x5E, 0xC2 });                          // DIVPS  XMM0,XMM2
+                Manipulator.WritePatch(0x00000001406A1F87, new byte[] { 0x66, 0x0F, 0xD6, 0x44, 0x24, 0x10 });        // MOVQ  qword ptr [RSP+0x10],XMM0
+                Manipulator.WritePatch(0x00000001406A1F8D, new byte[] { 0xEB, 0x06 });                                // JMP  0x1406a1f95 (back to original function)
+                Manipulator.WritePatch(0x00000001406A1F90, new byte[] { 0xEB, 0x67 });                                // JMP  0x1406a1ff9
+            }
             // Skip Error Display in ADVERTISE by rakisaionji
             switch (Settings.System.ErrorDisplay)
             {
