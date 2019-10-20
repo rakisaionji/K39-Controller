@@ -33,9 +33,9 @@ namespace K39C
         [DllImport("kernel32.dll")]
         private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
-        public static Settings Settings { get; private set; }
+        internal static Settings Settings { get; private set; }
 
-        static void PrintProgramInfo()
+        private static void PrintProgramInfo()
         {
             Console.WriteLine("------------------------------------------------------------");
 #if DEBUG
@@ -50,7 +50,7 @@ namespace K39C
             Console.WriteLine("------------------------------------------------------------");
         }
 
-        public static void Stop()
+        internal static void Stop()
         {
             stopFlag = true;
             foreach (var component in components) component.Stop();
@@ -141,7 +141,7 @@ namespace K39C
             }
         }
 
-        static void StartDiva()
+        private static void StartDiva()
         {
             var pa = Settings.Executable.DivaPath.Trim();
             if (String.IsNullOrEmpty(pa) || !File.Exists(pa)) return;
@@ -162,7 +162,7 @@ namespace K39C
             WaitForDiva();
         }
 
-        static void WaitForDiva()
+        private static void WaitForDiva()
         {
             var waitTime = Settings.Executable.WaitTime;
             if (waitTime < 0) waitTime = 0;

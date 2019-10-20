@@ -82,7 +82,7 @@ namespace K39C
         private int startIdx;
         // private uint playIdx;
 
-        public PlayerDataManager(Manipulator manipulator)
+        internal PlayerDataManager(Manipulator manipulator)
         {
             Manipulator = manipulator;
         }
@@ -183,7 +183,7 @@ namespace K39C
             if (divaScore != null) divaScore.SavePlayerScoreData();
         }
 
-        public void Initialize()
+        internal void Initialize()
         {
             InjectPatches();
             ReadPlayerData();
@@ -246,7 +246,7 @@ namespace K39C
             WritePlayerData();
         }
 
-        public void Update()
+        internal void Update()
         {
             var currentSubState = (SubGameState)Manipulator.ReadInt32(CURRENT_SUB_STATE);
             // 4       .. save all when flag = 3 / flag = 0

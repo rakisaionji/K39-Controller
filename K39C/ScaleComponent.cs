@@ -28,7 +28,7 @@ namespace K39C
         private const long FB_ASPECT_RATIO = 0x0000000140FBC2E8;
         private const long UI_ASPECT_RATIO = 0x000000014CC621D0;
 
-        public ScaleComponent(Manipulator manipulator)
+        internal ScaleComponent(Manipulator manipulator)
         {
             Manipulator = manipulator;
         }
@@ -40,7 +40,7 @@ namespace K39C
             Manipulator.WritePatchNop(0x00000001405030A0, 6); // Whatever shitty checking flag, only Froggy knows
         }
 
-        public void Update()
+        internal void Update()
         {
             Manipulator.GetClientRect(Manipulator.AttachedProcess.MainWindowHandle, out RECT hWindow);
 

@@ -33,7 +33,7 @@ namespace K39C
 
         private readonly string ANNOUNCE_PATH = Assembly.GetSaveDataPath("BannerData.txt");
 
-        public Watchdog(Manipulator manipulator, Settings settings)
+        internal Watchdog(Manipulator manipulator, Settings settings)
         {
             Manipulator = manipulator;
             Settings = settings;
@@ -142,7 +142,7 @@ namespace K39C
             thread = null;
         }
 
-        public void Update()
+        internal void Update()
         {
             return;
         }

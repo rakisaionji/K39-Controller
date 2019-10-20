@@ -40,7 +40,7 @@ namespace K39C
         private readonly string SCORE_LOG_PATH = Assembly.GetSaveDataPath(String.Format("ScoreData\\ScoreData_{0:yyyyMMdd}.dat", DateTime.UtcNow));
         private readonly string SCORE_DATA_PATH = Assembly.GetSaveDataPath("ScoreData");
 
-        public DivaScore(Manipulator manipulator)
+        internal DivaScore(Manipulator manipulator)
         {
             isInitialized = false;
             Manipulator = manipulator;

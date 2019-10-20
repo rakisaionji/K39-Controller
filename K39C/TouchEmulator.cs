@@ -18,7 +18,7 @@ namespace K39C
         private const long TOUCH_PANEL_PRESSURE = TOUCH_PANEL_TASK_OBJECT + 0x9CL;
         // private const long ADV_TOUCH_IS_TAPPED = 0x140EC52D0L + 0x70L;
 
-        public TouchEmulator(Manipulator manipulator)
+        internal TouchEmulator(Manipulator manipulator)
         {
             Manipulator = manipulator;
         }

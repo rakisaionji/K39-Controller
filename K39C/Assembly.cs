@@ -2,13 +2,13 @@
 
 namespace K39C
 {
-    public static class Assembly
+    internal static class Assembly
     {
-        public const byte RETN_OPCODE = 0xC3;
+        internal const byte RETN_OPCODE = 0xC3;
 
-        public const byte NOP_OPCODE = 0x90;
+        internal const byte NOP_OPCODE = 0x90;
 
-        public static byte[] GetNopInstructions(int length)
+        internal static byte[] GetNopInstructions(int length)
         {
             byte[] buffer = new byte[length];
 
@@ -18,7 +18,7 @@ namespace K39C
             return buffer;
         }
 
-        public static byte[] GetPaddedReturnInstructions(int length)
+        internal static byte[] GetPaddedReturnInstructions(int length)
         {
             byte[] buffer = new byte[length + 1];
             buffer[0] = RETN_OPCODE;
@@ -29,7 +29,7 @@ namespace K39C
             return buffer;
         }
 
-        public static string GetSaveDataPath(string fileName)
+        internal static string GetSaveDataPath(string fileName)
         {
             string directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             return Path.Combine(directory, fileName);
