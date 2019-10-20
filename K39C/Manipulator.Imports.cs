@@ -11,6 +11,8 @@ namespace K39C
 
         private const string KERNEL32_DLL = "kernel32.dll";
 
+        private const uint PAGE_EXECUTE_READWRITE = 0x40;
+
         [DllImport(USER32_DLL)]
         public static extern IntPtr GetForegroundWindow();
 
@@ -44,8 +46,8 @@ namespace K39C
         [DllImport(USER32_DLL)]
         static extern bool ScreenToClient(IntPtr hWnd, out POINT lpPoint);
 
-        // [DllImport(KERNEL32_DLL)]
-        // public static extern bool VirtualProtect(IntPtr lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
+        [DllImport(KERNEL32_DLL)]
+        static extern bool VirtualProtectEx(IntPtr hProcess, long lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
 
         [DllImport(KERNEL32_DLL)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]

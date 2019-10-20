@@ -31,45 +31,12 @@ namespace K39C
         private Regex REGEX_KEYCHIP_ID = new Regex(@"A[0-9]{2}E\-\d{2}A\d{8}", RegexOptions.CultureInvariant);
         private Regex REGEX_ALLOW_ID = new Regex(@"[^A-Z0-9]", RegexOptions.CultureInvariant);
 
-        private const int SYS_TIME_FACTOR = 60;
-        private const int SEL_PV_FREEZE_TIME = 39;
-        private const int SYS_TIMER_TIME = SEL_PV_FREEZE_TIME * SYS_TIME_FACTOR;
-        // private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
-
         private readonly string ANNOUNCE_PATH = Assembly.GetSaveDataPath("BannerData.txt");
 
         public Watchdog(Manipulator manipulator, Settings settings)
         {
             Manipulator = manipulator;
             Settings = settings;
-        }
-
-        private void SysTimer_Start()
-        {
-            // Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, SYS_TIMER_TIME);
-
-            // 0x00000001405C5143:  mov qword ptr [rsi+0B38h], 3600
-            Manipulator.WriteInt32(0x1405C514AL, SYS_TIMER_TIME);
-
-            // 0x00000001405BDFBF:  dec dword ptr [rbx+0B38h]
-            Manipulator.Write(0x1405BDFBFL, Assembly.GetNopInstructions(6));
-
-            // 0x00000001405C517A:  mov [rsi+0B38h], ecx
-            Manipulator.Write(0x1405C517AL, Assembly.GetNopInstructions(6));
-        }
-
-        private void SysTimer_Stop()
-        {
-            // Manipulator.WriteInt32(SEL_PV_TIME_ADDRESS, 0xE10);
-
-            // 0x00000001405C5143:  mov qword ptr [rsi+0B38h], 3600
-            // Manipulator.WriteInt32(0x1405C514AL, 0xE10);
-
-            // 0x00000001405BDFBF:  dec dword ptr [rbx+0B38h]
-            // Manipulator.Write(0x1405BDFBFL, new byte[] { 0xFF, 0x8B, 0x38, 0x0B, 0x00, 0x00 });
-
-            // 0x00000001405C517A:  mov [rsi+0B38h], ecx
-            // Manipulator.Write(0x1405C517AL, new byte[] { 0x89, 0x8E, 0x38, 0x0B, 0x00, 0x00 });
         }
 
         private string MainId
@@ -153,7 +120,6 @@ namespace K39C
 
         public void Start()
         {
-            if (Settings.System.SysTimer) SysTimer_Start();
             KeychipId = Settings.System.KeychipId.Trim();
             MainId = Settings.System.MainId.Trim();
 

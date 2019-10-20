@@ -8,6 +8,9 @@ namespace K39C
         Manipulator Manipulator;
         Dictionary<long, byte[]> patches;
 
+        private const int SYS_TIMER_TIME = 60 * 39;
+        // private const long SEL_PV_TIME_ADDRESS = 0x000000014CC12498L;
+
         public DivaPatcher(Manipulator manipulator, Settings settings)
         {
             patches = new Dictionary<long, byte[]>
@@ -59,9 +62,9 @@ namespace K39C
                 Manipulator.WritePatch(0x000000014019341B, new byte[] { (byte)Settings.DivaPatches.GlutCursor });
             if (Settings.DivaPatches.HideCredits)
             {
-                // Dirty hide of CREDIT(S) counter, revised by rakisaionji
-                Manipulator.WritePatch(0x00000001403BAC2E, new byte[] { 0xD8 }); // CREDIT(S)
-                Manipulator.WritePatch(0x00000001403BABEF, new byte[] { 0x06, 0xB6 }); // FREE PLAY
+                // Dirty hide of CREDIT(S) counter by rakisaionji
+                Manipulator.WritePatch(0x00000001409F6200, new byte[] { 0x00 }); // CREDIT(S)
+                Manipulator.WritePatch(0x00000001409F61F0, new byte[] { 0x00 }); // FREE PLAY
             }
             if (Settings.Components.PlayerDataManager)
             {
@@ -72,8 +75,8 @@ namespace K39C
                 Manipulator.WritePatchNop(0x000000014020515F, 20);
             }
             // Hide Data Loading text when use_card = 1 by rakisaionji
-            Manipulator.WritePatch(0x00000001405BA42D, new byte[] { 0xF7 });
-            Manipulator.WritePatch(0x00000001405BB95C, new byte[] { 0x6F });
+            Manipulator.WritePatch(0x0000000140A3E720, new byte[] { 0x00 });
+            Manipulator.WritePatch(0x0000000140A3E7C8, new byte[] { 0x00 });
             if (Settings.DivaPatches.MdataPathFix)
             {
                 // Change mdata path from "C:/Mount/Option" to "mdata", revised by rakisaionji
@@ -84,7 +87,7 @@ namespace K39C
             // Touch effect is annoying without Scale Component in other resolutions
             // It's not cool, just yeet it for fuck's sake, by rakisaionji
             if (Settings.Executable.IsCustomRes() && !Settings.Components.ScaleComponent)
-                Manipulator.WritePatch(0x00000001406A1FD7, new byte[] { 0xEE });
+                Manipulator.WritePatch(0x0000000140A390C0, new byte[] { 0x00 });
             // Skip Error Display in ADVERTISE by rakisaionji
             switch (Settings.System.ErrorDisplay)
             {
@@ -167,11 +170,30 @@ namespace K39C
                 Manipulator.WritePatch(0x00000001404E7950, new byte[] { 0x48, 0xE9 }); // ensure first iteration doesn't run
             }
             if (Settings.DivaPatches.HidePvMark) // Revised by rakisaionji
-                Manipulator.WritePatch(0x000000014048FA59, new byte[] { 0x32 });
+                Manipulator.WritePatch(0x0000000140A13A88, new byte[] { 0x00 });
             if (Settings.DivaPatches.HideSeBtn) // Revised by rakisaionji
                 Manipulator.WritePatchNop(0x000000014013CE58, 19);
             if (Settings.DivaPatches.HideVolume) // Revised by rakisaionji
                 Manipulator.WritePatchNop(0x0000000140624BDF, 15);
+            // System Timer Patches, by samyuu and rakisaionji
+            var sys_timer = (int)Settings.System.SysTimer;
+            if (sys_timer > 1) // HIDDEN
+            {
+                Manipulator.WritePatch(0x00000001409C0758, new byte[] { 0x00 });
+                Manipulator.WritePatch(0x0000000140A3D3F0, new byte[] { 0x00 });
+                Manipulator.WritePatch(0x0000000140A3D3F8, new byte[] { 0x00 });
+            }
+            if (sys_timer > 0) // FREEZE
+            {
+                // SEL_CARD_TIMER
+                Manipulator.WriteInt32(0x0000000141802660, SYS_TIMER_TIME);
+                Manipulator.WritePatchNop(0x0000000140566B9E, 3);
+                Manipulator.WritePatchNop(0x0000000140566AEF, 3);
+                // SEL_PV_TIMER
+                Manipulator.WriteInt32(0x00000001405C514A, SYS_TIMER_TIME);
+                Manipulator.WritePatchNop(0x00000001405BDFBF, 6);
+                Manipulator.WritePatchNop(0x00000001405C517A, 6);
+            }
         }
     }
 }

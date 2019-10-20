@@ -12,8 +12,8 @@ namespace K39C
     class Program
     {
         internal static readonly string K39C_CODEVER = "K39-PICO";
-        internal static readonly string K39C_VERSION = "7.10.42";
-        internal static readonly string K39C_RELDATE = "2019-10-20";
+        internal static readonly string K39C_VERSION = "7.10.45";
+        internal static readonly string K39C_RELDATE = "2019-12-24";
 
         private static readonly string APP_SETTING_PATH = Assembly.GetSaveDataPath("Settings.xml");
         private static readonly string DIVA_PROCESS_NAME = "diva";
@@ -118,7 +118,10 @@ namespace K39C
                         Settings.Components.PlayerDataManager = true;
                         break;
                     case "f": // System Timer
-                        Settings.System.SysTimer = true;
+                        Settings.System.SysTimer = TimerDisplay.FREEZE;
+                        break;
+                    case "h": // System Timer
+                        Settings.System.SysTimer = TimerDisplay.HIDDEN;
                         break;
                     case "i": // Plugin Loader
                         if (arg.Length < 4) break;
@@ -184,7 +187,7 @@ namespace K39C
             LockConsole();
             LoadSettings();
 #if DEBUG
-            args = new string[] { "-t", "-s", "-p", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
+            args = new string[] { "-t", "-s", "-p", "-h", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
             Settings.DivaPatches.GlutCursor = GlutCursor.RIGHT_ARROW;
             Settings.DivaPatches.FreePlay = true;
             Settings.DivaPatches.RamPathFix = true;

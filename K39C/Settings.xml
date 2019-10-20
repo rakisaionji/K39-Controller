@@ -9,7 +9,7 @@
   <System>
     <KeychipId></KeychipId>
     <MainId></MainId>
-    <SysTimer>true</SysTimer>
+    <SysTimer>DEFAULT</SysTimer>
     <TemporalAA>true</TemporalAA>
     <MorphologicalAA>true</MorphologicalAA>
     <ErrorDisplay>SKIP_CARD</ErrorDisplay>

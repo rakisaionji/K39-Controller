@@ -321,13 +321,19 @@ namespace K39C
         public void WritePatch(long address, byte[] value)
         {
             if (!IsAttached || address <= 0) return;
+            uint oldProtect, bck;
+            VirtualProtectEx(ProcessHandle, address, value.Length, PAGE_EXECUTE_READWRITE, out oldProtect);
             WriteProcessMemory(ProcessHandle, address, value, value.Length, out int bytesWritten);
+            VirtualProtectEx(ProcessHandle, address, value.Length, oldProtect, out bck);
         }
 
         public void WritePatchNop(long address, int length)
         {
             if (!IsAttached || address <= 0) return;
+            uint oldProtect, bck;
+            VirtualProtectEx(ProcessHandle, address, length, PAGE_EXECUTE_READWRITE, out oldProtect);
             Write(address, Assembly.GetNopInstructions(length));
+            VirtualProtectEx(ProcessHandle, address, length, oldProtect, out bck);
         }
 
         public void WriteAsciiString(long address, int length, string value)

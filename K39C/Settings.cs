@@ -43,7 +43,7 @@ namespace K39C
         {
             [XmlElement] public string KeychipId { get; set; } = String.Empty;
             [XmlElement] public string MainId { get; set; } = String.Empty;
-            [XmlElement] public bool SysTimer { get; set; } = false;
+            [XmlElement] public TimerDisplay SysTimer { get; set; } = TimerDisplay.DEFAULT;
             [XmlElement] public bool TemporalAA { get; set; } = true;
             [XmlElement] public bool MorphologicalAA { get; set; } = true;
             [XmlElement] public ErrorDisplay ErrorDisplay { get; set; } = ErrorDisplay.SKIP_CARD;
@@ -72,7 +72,6 @@ namespace K39C
         {
             System.KeychipId = String.Empty;
             System.MainId = String.Empty;
-            System.SysTimer = false;
             System.TemporalAA = true;
             System.MorphologicalAA = true;
             Components.TouchEmulator = false;
@@ -96,5 +95,12 @@ namespace K39C
         DEFAULT,
         SKIP_CARD,
         HIDDEN
+    }
+
+    public enum TimerDisplay
+    {
+        DEFAULT = 0,
+        FREEZE = 1,
+        HIDDEN = 2
     }
 }
