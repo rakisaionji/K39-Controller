@@ -194,6 +194,26 @@ namespace K39C
                 Manipulator.WritePatchNop(0x00000001405BDFBF, 6);
                 Manipulator.WritePatchNop(0x00000001405C517A, 6);
             }
+            // Anti-alias Patches, by lybxlpsv and nastys
+            if (!Settings.System.TemporalAA) // Disable Temporal AA
+            {
+                // Set TAA var (shouldn't be needed but whatever)
+                Manipulator.WriteByte(0x00000001411AB67C, 0);
+                // Make constructor/init not set TAA
+                Manipulator.WritePatchNop(0x00000001404AB11D, 3);
+                // Not sure, but it's somewhere in TaskPvGame init
+                // Just make it set TAA to 0 instead of 1 to avoid possible issues
+                Manipulator.WritePatch(0x00000001401063CE, new byte[] { 0x00 });
+                // Prevent re-enabling after taking photos
+                Manipulator.WritePatch(0x000000014048FBA9, new byte[] { 0x00 });
+            }
+            if (!Settings.System.MorphologicalAA)
+            {
+                // Set MLAA var (shouldn't be needed but whatever)
+                Manipulator.WriteByte(0x00000001411AB680, 0);
+                // Make constructor/init not set MLAA
+                Manipulator.WritePatchNop(0x00000001404AB11A, 3);
+            }
         }
     }
 }

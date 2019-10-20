@@ -101,7 +101,6 @@ namespace K39C
         private static void SaveSettings(string[] args) // Read from args
         {
             if (args == null || args.Length == 0) return;
-            Settings.Reset();
             foreach (var arg in args.Select(a => a.Trim()).Distinct())
             {
                 if (arg.Length < 2) continue;
@@ -187,13 +186,15 @@ namespace K39C
             LockConsole();
             LoadSettings();
 #if DEBUG
-            args = new string[] { "-t", "-s", "-p", "-h", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
+            args = new string[] { "-t", "-s", "-p", "-f", "-i:FastLoader", "-k:A61E-01A07376003", "-m:AAVE-01A03965611" };
             Settings.DivaPatches.GlutCursor = GlutCursor.RIGHT_ARROW;
             Settings.DivaPatches.FreePlay = true;
             Settings.DivaPatches.RamPathFix = true;
             Settings.DivaPatches.MdataPathFix = true;
             Settings.DivaPatches.CardIcon = StatusIcon.OK;
             Settings.DivaPatches.NetIcon = StatusIcon.OK;
+            Settings.System.TemporalAA = false;
+            Settings.System.MorphologicalAA = false;
 #endif
             SaveSettings(args);
 

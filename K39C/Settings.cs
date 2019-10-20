@@ -67,18 +67,6 @@ namespace K39C
             [XmlElement] public StatusIcon CardIcon { get; set; } = StatusIcon.DEFAULT;
             [XmlElement] public StatusIcon NetIcon { get; set; } = StatusIcon.DEFAULT;
         }
-
-        public void Reset()
-        {
-            System.KeychipId = String.Empty;
-            System.MainId = String.Empty;
-            System.TemporalAA = true;
-            System.MorphologicalAA = true;
-            Components.TouchEmulator = false;
-            Components.ScaleComponent = false;
-            Components.PlayerDataManager = true;
-            DivaPlugins = new List<string>();
-        }
     }
 
     public enum StatusIcon

@@ -144,12 +144,6 @@ namespace K39C
 
         public void Update()
         {
-            if (!Settings.System.TemporalAA)
-                // Disable Temporal AA by lybxlpsv
-                Manipulator.WriteByte(0x00000001411AB67C, 0);
-            if (!Settings.System.MorphologicalAA)
-                // Disable Morphological AA by lybxlpsv
-                Manipulator.WriteByte(0x00000001411AB680, 0);
             return;
         }
 
