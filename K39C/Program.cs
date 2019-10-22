@@ -233,6 +233,7 @@ namespace K39C
 
             consoleY = Console.CursorTop;
             Console.WriteLine("    APPLICATION      : OK");
+            Console.WriteLine("------------------------------------------------------------");
 
             while (!stopFlag && Manipulator.IsProcessRunning())
             {

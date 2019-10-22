@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace K39C
 {
@@ -85,7 +86,7 @@ namespace K39C
                 Manipulator.WritePatch(0x000000014066CEAE, new byte[] { 0x05 }); // Size
             }
             // Touch effect is annoying without Scale Component in other resolutions
-            if (Settings.Executable.IsCustomRes() && !Settings.Components.ScaleComponent)
+            if (Settings.IsCustomRes() || Settings.Components.ScaleComponent)
             {
                 Manipulator.WritePatch(0x00000001406A1FE2, new byte[] { 0x7E });                                            // MOVQ  XMM0,qword ptr [0x168 + RSP] (change to MOVQ)
                 Manipulator.WritePatch(0x00000001406A1FE9, new byte[] { 0x66, 0x0F, 0xD6, 0x44, 0x24, 0x6C });              // MOVQ  qword ptr [RSP + 0x6c],XMM0
@@ -232,6 +233,14 @@ namespace K39C
                 Manipulator.WriteByte(0x00000001411AB680, 0);
                 // Make constructor/init not set MLAA
                 Manipulator.WritePatchNop(0x00000001404AB11A, 3);
+            }
+            // Force wqhd for custom internal resolution, by rakisaionji
+            if (Settings.System.CustomRes)
+            {
+                Manipulator.WritePatch(0x00000001401945E4, new byte[] {
+                    0xC7, 0x05, 0xE6, 0x5F, 0xD4, 0x00, 0x0F, 0x00, 0x00, 0x00, 0xE9, 0xD3, 0x01, 0x00, 0x00 });
+                Manipulator.WritePatch(0x00000001409B8B68, BitConverter.GetBytes(Settings.System.RenderWidth));
+                Manipulator.WritePatch(0x00000001409B8B6C, BitConverter.GetBytes(Settings.System.RenderHeight));
             }
         }
     }

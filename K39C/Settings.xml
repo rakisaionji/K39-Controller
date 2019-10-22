@@ -11,6 +11,9 @@
     <MainId></MainId>
     <HideId>false</HideId>
     <SysTimer>DEFAULT</SysTimer>
+    <CustomRes>false</CustomRes>
+    <RenderWidth>1920</RenderWidth>
+    <RenderHeight>1080</RenderHeight>
     <TemporalAA>true</TemporalAA>
     <MorphologicalAA>true</MorphologicalAA>
     <ErrorDisplay>SKIP_CARD</ErrorDisplay>

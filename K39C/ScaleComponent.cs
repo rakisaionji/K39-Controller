@@ -28,7 +28,7 @@ namespace K39C
         private const long FB_ASPECT_RATIO = 0x0000000140FBC2E8;
         private const long UI_ASPECT_RATIO = 0x000000014CC621D0;
 
-        internal ScaleComponent(Manipulator manipulator)
+        public ScaleComponent(Manipulator manipulator)
         {
             Manipulator = manipulator;
         }
@@ -40,27 +40,34 @@ namespace K39C
             Manipulator.WritePatchNop(0x00000001405030A0, 6); // Whatever shitty checking flag, only Froggy knows
         }
 
-        internal void Update()
+        public void Update()
         {
             Manipulator.GetClientRect(Manipulator.AttachedProcess.MainWindowHandle, out RECT hWindow);
 
             if (hWindow.Equals(lhWindow)) return;
-            if (hWindow.Bottom - hWindow.Top == 0) return;
 
-            Manipulator.WriteSingle(UI_ASPECT_RATIO, (float)(hWindow.Right - hWindow.Left) / (float)(hWindow.Bottom - hWindow.Top));
-            Manipulator.WriteDouble(FB_ASPECT_RATIO, (double)(hWindow.Right - hWindow.Left) / (double)(hWindow.Bottom - hWindow.Top));
-            Manipulator.WriteSingle(UI_WIDTH_ADDRESS, hWindow.Right - hWindow.Left);
-            Manipulator.WriteSingle(UI_HEIGHT_ADDRESS, hWindow.Bottom - hWindow.Top);
-            Manipulator.WriteInt32(FB1_WIDTH_ADDRESS, hWindow.Right - hWindow.Left);
-            Manipulator.WriteInt32(FB1_HEIGHT_ADDRESS, hWindow.Bottom - hWindow.Top);
+            var uiWidth = hWindow.Right - hWindow.Left;
+            var uiHeight = hWindow.Bottom - hWindow.Top;
+
+            if (uiWidth == 0 || uiHeight == 0) return;
+
+            Manipulator.WriteSingle(UI_ASPECT_RATIO, (float)(uiWidth) / (float)(uiHeight));
+            Manipulator.WriteDouble(FB_ASPECT_RATIO, (double)(uiWidth) / (double)(uiHeight));
+            Manipulator.WriteSingle(UI_WIDTH_ADDRESS, uiWidth);
+            Manipulator.WriteSingle(UI_HEIGHT_ADDRESS, uiHeight);
+            Manipulator.WriteInt32(FB1_WIDTH_ADDRESS, uiWidth);
+            Manipulator.WriteInt32(FB1_HEIGHT_ADDRESS, uiHeight);
+
+            var resWidth = Manipulator.ReadInt32(0x0000000140EDA8BC);
+            var resHeight = Manipulator.ReadInt32(0x0000000140EDA8C0);
 
             Manipulator.WriteInt32(0x00000001411AD608, 0); // Set that fucking whatever shitty checking flag to 0
-            Manipulator.WriteInt32(0x0000000140EDA8E4, Manipulator.ReadInt32(0x0000000140EDA8BC)); // RESOLUTION_WIDTH
-            Manipulator.WriteInt32(0x0000000140EDA8E8, Manipulator.ReadInt32(0x0000000140EDA8C0)); // RESOLUTION_HEIGHT
+            Manipulator.WriteInt32(0x0000000140EDA8E4, resWidth); // RESOLUTION_WIDTH
+            Manipulator.WriteInt32(0x0000000140EDA8E8, resHeight); // RESOLUTION_HEIGHT
 
             Manipulator.WriteSingle(0x00000001411A1900, 0); // WTF FROGGY? 0x00000001411A1870 + 0x90
-            Manipulator.WriteSingle(0x00000001411A1904, (float)Manipulator.ReadInt32(0x0000000140EDA8BC)); // RESOLUTION_WIDTH
-            Manipulator.WriteSingle(0x00000001411A1908, (float)Manipulator.ReadInt32(0x0000000140EDA8C0)); // RESOLUTION_HEIGHT
+            Manipulator.WriteSingle(0x00000001411A1904, (float)resWidth); // RESOLUTION_WIDTH
+            Manipulator.WriteSingle(0x00000001411A1908, (float)resHeight); // RESOLUTION_HEIGHT
 
             lhWindow = hWindow;
         }
